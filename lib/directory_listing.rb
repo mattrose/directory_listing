@@ -86,21 +86,21 @@ module Directory_listing
       $filename_truncate_length = 40
     end
     
-    html = "<html>\n<head>"
+    html = "<html>\n<head>\n"
     if options[:stylesheet]
-      html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"/#{options[:stylesheet].sub(/^[\/]*/,"")}\">"
+      html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"/#{options[:stylesheet].sub(/^[\/]*/,"")}\">\n"
     end
-    html << "</head>\n<body>"
-    html << "<h1>Index of #{options[:directory]}</h1>"
-    html << "<table>"
-    html << "<tr>\n<th>File</th>\n<th>Last modified</th>\n<th>Size</th>\n</tr>"
+    html << "</head>\n<body>\n"
+    html << "<h1>Index of #{options[:directory]}</h1>\n"
+    html << "<table>\n"
+    html << "\t<tr>\n\t\t<th>File</th>\n\t\t<th>Last modified</th>\n\t\t<th>Size</th>\n\t</tr>"
     files = Array.new
     Dir.foreach(dir, &files.method(:push))
     files.sort.each do |file|
       html << wrap(file, dir)
     end
-    html << "</table>"
-		html << "</html>\n</body>"
+    html << "\n</table>\n"
+		html << "</body>\n</html>\n"
     "#{html}"
   end
   
@@ -155,7 +155,7 @@ module Directory_listing
     if File.directory?(File.join(dir, file))
       html << "<a href='#{file}'>#{pre_dir}#{tfile}#{post_dir}</a>"
     else
-      html << "#{pre_reg}#{tfile}#{post_reg}"
+      html << "<a href='#{file}'>#{pre_reg}#{tfile}#{post_reg}"
     end
     "#{html}"
   end
@@ -163,18 +163,16 @@ module Directory_listing
   def self.wrap(file, dir)
     wrapped = ""
     if $should_list_invisibles == "yes"
-      wrapped << "<tr>
-      <td>#{name(file, dir)}</td>
-      <td>#{m_time(file, dir)}</td>
-      <td>#{size(file, dir)}</td>
-      </tr>"
+      wrapped << "\n\t<tr>
+      \t<td>#{name(file, dir)}</td>
+      \t<td>#{m_time(file, dir)}</td>
+      \t<td>#{size(file, dir)}</td>\n\t</tr>"
     else
       if file[0] != "."
-        wrapped << "<tr>
-        <td>#{name(file, dir)}</td>
-        <td>#{m_time(file, dir)}</td>
-        <td>#{size(file, dir)}</td>
-        </tr>"
+        wrapped << "\n\t<tr>
+        \t<td>#{name(file, dir)}</td>
+        \t<td>#{m_time(file, dir)}</td>
+        \t<td>#{size(file, dir)}</td>\n\t</tr>"
       end
     end
     "#{wrapped}"
