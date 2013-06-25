@@ -15,6 +15,7 @@ require 'filesize'
 # 		"#{Directory_listing.list(
 # 			:directory => path, 
 # 			:sinatra_public => settings.public_folder,
+# 			:stylesheet => "stylesheets/styles.css",
 # 			:should_list_invisibles => "no",
 # 			:last_modified_format => "%Y-%m-%d %H:%M:%S",
 # 			:dir_html_style => "bold",
@@ -35,6 +36,7 @@ require 'filesize'
 #
 # directory # the directory to list
 # sinatra_public # sinatra's public folder - your public folder (and the default) is likely "settings.public_folder"
+# stylesheet # pass a stylesheet to style the page with
 # should_list_invisibles # should the directory listing include invisibles (dotfiles) - "yes" or "no"
 # last_modified_format # format for last modified date (http://www.ruby-doc.org/core-2.0/Time.html) - defaults to "%Y-%m-%d %H:%M:%S"
 # dir_html_style # html style for directories - "bold", "italic", "underline", or "none" - defaults to "bold"
@@ -84,7 +86,11 @@ module Directory_listing
       $filename_truncate_length = 40
     end
     
-    html = "<html>\n<body>"
+    html = "<html>\n<head>"
+    if options[:stylesheet]
+      html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"/#{options[:stylesheet].sub(/^[\/]*/,"")}\">"
+    end
+    html << "</head>\n<body>"
     html << "<h1>Index of #{options[:directory]}</h1>"
     html << "<table>"
     html << "<tr>\n<th>File</th>\n<th>Last modified</th>\n<th>Size</th>\n</tr>"
