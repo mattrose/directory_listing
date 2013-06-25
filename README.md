@@ -9,29 +9,30 @@ sudo gem install ./directory_listing-x.x.x.gem
 
 ### usage:
 
-```Directory_listing.list``` will return HTML, so the following is a complete Sinatra app that will provide a directory listing of whatever path you navigate to:
+```Directory_listing.list``` will return HTML, so the following is a complete 
+Sinatra app that will provide a directory listing of whatever path you navigate 
+to and let you view any file that is served directly:
 
 ```ruby
-require 'directory_listing'
+require 'directory_listing
 
 get '*' do |path|
 	if File.exist?(File.join(settings.public_folder, path))
-		"#{Directory_listing.list(
-			:directory => path, 
-			:sinatra_public => settings.public_folder,
-			:stylesheet => "stylesheets/styles.css",
-			:should_list_invisibles => "no",
-			:last_modified_format => "%Y-%m-%d %H:%M:%S",
-			:dir_html_style => "bold",
-			:regfile_html_style => "none",
-			:filename_truncate_length => 40)}"
+		if File.directory?(File.join(settings.public_folder, path))
+			"#{Directory_listing.list(
+				:directory => path, 
+				:sinatra_public => settings.public_folder,
+				)}"
+		else
+			send_file File.join(settings.public_folder, path)
+		end
 	else
 		not_found
 	end
 end
 
 not_found do
-  'Try again.'
+	'Try again.'
 end
 ```
 
@@ -45,7 +46,31 @@ sinatra_public # sinatra's public folder - your public folder (and the default) 
 stylesheet # pass a stylesheet to style the page with
 should_list_invisibles # should the directory listing include invisibles (dotfiles) - "yes" or "no"
 last_modified_format # format for last modified date (http://www.ruby-doc.org/core-2.0/Time.html) - defaults to "%Y-%m-%d %H:%M:%S"
-dir_html_style # html style for directories - "bold", "italic", "underline", or "none" - defaults to "bold"
-regfile_html_style # html style for regular files - "bold", "italic", "underline", or "none" - defaults to "none"
 filename_truncate_length # (integer) length to truncate file names to - defaults to 40
+```
+
+### styling:
+
+It's pretty easy to figure out how to style directory_listing by looking at the source. 
+
+Some gotchas:
+
+Every item listed is a ```<td>``` element in a table. Directories will have a class of ```dir``` and regular files will have a class of ```file```. 
+
+You can style the "File" column with this CSS:
+
+```css
+table tr > td:first-child { 
+	text-align: left;
+}
+
+Second column:
+table tr > td:first-child + td { 
+	text-align: left;
+}
+
+Third column:
+table tr > td:first-child + td + td { 
+	text-align: left;
+}
 ```
