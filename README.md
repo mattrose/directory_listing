@@ -44,16 +44,14 @@ Any option key may be omitted except for ```:directory``` and ```:sinatra_public
 directory # the directory to list
 sinatra_public # sinatra's public folder - your public folder (and the default) is likely "settings.public_folder"
 stylesheet # pass a stylesheet to style the page with
-should_list_invisibles # should the directory listing include invisibles (dotfiles) - "yes" or "no"
+should_list_invisibles # whether the directory listing should include invisibles (dotfiles) - "yes" or "no"
 last_modified_format # format for last modified date (http://www.ruby-doc.org/core-2.0/Time.html) - defaults to "%Y-%m-%d %H:%M:%S"
 filename_truncate_length # (integer) length to truncate file names to - defaults to 40
 ```
 
 ### styling:
 
-It's pretty easy to figure out how to style directory_listing by looking at the source. 
-
-Some gotchas:
+It's pretty easy to figure out how to style ```directory_listing``` by looking at the source, but here are some gotchas:
 
 Every item listed is a ```<td>``` element in a table. Directories will have a class of ```dir``` and regular files will have a class of ```file```. 
 
@@ -63,13 +61,19 @@ You can style the "File" column with this CSS:
 table tr > td:first-child { 
   text-align: left;
 }
+```
 
-Second column:
+"Last modified" column:
+
+```css
 table tr > td:first-child + td { 
   text-align: left;
 }
+```
 
-Third column:
+"Size" column:
+
+```css
 table tr > td:first-child + td + td { 
   text-align: left;
 }
