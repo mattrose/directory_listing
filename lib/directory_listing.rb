@@ -5,29 +5,29 @@ require 'filesize'
 #
 # == Usage
 #
-# Directory_listing will return HTML, so the following is a complete Sinatra 
-# app that will provide a directory listing of whatever path you navigate to:
+# Directory_listing.list will return HTML, so the following is a complete Sinatra 
+# app that will provide a directory listing of whatever path you navigate to
+# and let you view any file that is served directly:
 #
 # require 'directory_listing
 #
 # get '*' do |path|
 # 	if File.exist?(File.join(settings.public_folder, path))
-# 		"#{Directory_listing.list(
-# 			:directory => path, 
-# 			:sinatra_public => settings.public_folder,
-# 			:stylesheet => "stylesheets/styles.css",
-# 			:should_list_invisibles => "no",
-# 			:last_modified_format => "%Y-%m-%d %H:%M:%S",
-# 			:dir_html_style => "bold",
-# 			:regfile_html_style => "none",
-# 			:filename_truncate_length => 40)}"
+# 		if File.directory?(File.join(settings.public_folder, path))
+# 			"#{Directory_listing.list(
+# 				:directory => path, 
+# 				:sinatra_public => settings.public_folder,
+# 				)}"
+# 		else
+# 			send_file File.join(settings.public_folder, path)
+# 		end
 # 	else
 # 		not_found
 # 	end
 # end
 # 
 # not_found do
-#   'Try again.'
+# 	'Try again.'
 # end
 #
 # Any option key may be omitted except for :directory and :sinatra_public. Explanations of options are below.
@@ -39,9 +39,31 @@ require 'filesize'
 # stylesheet # pass a stylesheet to style the page with
 # should_list_invisibles # should the directory listing include invisibles (dotfiles) - "yes" or "no"
 # last_modified_format # format for last modified date (http://www.ruby-doc.org/core-2.0/Time.html) - defaults to "%Y-%m-%d %H:%M:%S"
-# dir_html_style # html style for directories - "bold", "italic", "underline", or "none" - defaults to "bold"
-# regfile_html_style # html style for regular files - "bold", "italic", "underline", or "none" - defaults to "none"
 # filename_truncate_length # (integer) length to truncate file names to - defaults to 40
+#
+# == Styling
+#
+# It's pretty easy to figure out how to style directory_listing by looking at the source. 
+#
+# Some gotchas:
+#
+# Every item listed is a <td> element in a table. Directories will have a class of "dir" and regular files will have a class of "file". 
+#
+# You can style the "File" column with this CSS:
+# 
+# table tr > td:first-child { 
+# 	text-align: left;
+# }
+# 
+# Second column:
+# table tr > td:first-child + td { 
+# 	text-align: left;
+# }
+# 
+# Third column:
+# table tr > td:first-child + td + td { 
+# 	text-align: left;
+# }
 
 module Directory_listing
   @@options = {}
@@ -70,16 +92,6 @@ module Directory_listing
     else
       $last_modified_format = "%Y-%m-%d %H:%M:%S"
     end
-    if options[:dir_html_style]
-      $dir_html_style = options[:dir_html_style]
-    else
-      $dir_html_style = "bold"
-    end
-    if options[:regfile_html_style]
-      $regfile_html_style = options[:regfile_html_style]
-    else
-      $regfile_html_style = "none"
-    end
     if options[:filename_truncate_length]
       $filename_truncate_length = options[:filename_truncate_length]
     else
@@ -107,55 +119,26 @@ module Directory_listing
   private
 
   def self.m_time(file, dir)
-    time = "#{File.mtime(File.join(dir, file)).strftime $last_modified_format}"
+    time = "\t<td>#{File.mtime(File.join(dir, file)).strftime $last_modified_format}</td>"
   end
 
   def self.size(file, dir)
     if File.directory?(File.join(dir, file))
-      "-"
+      "\t<td>-</td>"
     else
       size = Filesize.from("#{File.stat(File.join(dir, file)).size} B").pretty
-      "#{size}"
+      "\t<td>#{size}</td>"
     end
   end
 
   def self.name(file, dir)
-    html = pre_dir = post_dir = pre_reg = post_reg = ""
+    html = ""
     tfile = file.truncate($filename_truncate_length, '...')
 
-    case $dir_html_style
-    when "bold"
-      pre_dir = "<b>"
-      post_dir = "</b>"
-    when "italic"
-      pre_dir = "<i>"
-      post_dir = "</i>"
-    when "underline"
-      pre_dir = "<u>"
-      post_dir = "</u>"
-    else
-      pre_dir = "<b>"
-      post_dir = "</b>"
-    end
-    case $regfile_html_style
-    when "bold"
-      pre_reg = "<b>"
-      post_reg = "</b>"
-    when "italic"
-      pre_reg = "<i>"
-      post_reg = "</i>"
-    when "underline"
-      pre_reg = "<u>"
-      post_reg = "</u>"
-    else
-      pre_reg = ""
-      post_reg = ""
-    end
-
     if File.directory?(File.join(dir, file))
-      html << "<a href='#{file}'>#{pre_dir}#{tfile}#{post_dir}</a>"
+      html << "\t<td class=\"dir\"><a href='#{file}'>#{tfile}</a></td>"
     else
-      html << "<a href='#{file}'>#{pre_reg}#{tfile}#{post_reg}"
+      html << "\t<td class=\"file\"><a href='#{file}'>#{tfile}</td>"
     end
     "#{html}"
   end
@@ -164,15 +147,15 @@ module Directory_listing
     wrapped = ""
     if $should_list_invisibles == "yes"
       wrapped << "\n\t<tr>
-      \t<td>#{name(file, dir)}</td>
-      \t<td>#{m_time(file, dir)}</td>
-      \t<td>#{size(file, dir)}</td>\n\t</tr>"
+      #{name(file, dir)}
+      #{m_time(file, dir)}
+      #{size(file, dir)}\n\t</tr>"
     else
       if file[0] != "."
         wrapped << "\n\t<tr>
-        \t<td>#{name(file, dir)}</td>
-        \t<td>#{m_time(file, dir)}</td>
-        \t<td>#{size(file, dir)}</td>\n\t</tr>"
+        #{name(file, dir)}
+        #{m_time(file, dir)}
+        #{size(file, dir)}\n\t</tr>"
       end
     end
     "#{wrapped}"
