@@ -1,9 +1,9 @@
 Gem::Specification.new do |s|
 	s.name				= 'directory_listing'
-	s.version			= '0.0.3'
+	s.version			= '0.0.4'
 	s.date				= '2013-06-25'
-	s.summary			= "Easy Apache-style directory listings for Sinatra."
-	s.description = "A gem to use with Sinatra for generating Apache-style directory listings."
+	s.summary			= "Easy, CSS-styled, Apache-like directory listings for Sinatra."
+	s.description = "A gem to use with Sinatra for generating Apache-like directory listings."
 	s.authors			= ["Richard Myers"]
 	s.email				= 'rick.myers@me.com'
 	s.files				= ["lib/directory_listing.rb"]
