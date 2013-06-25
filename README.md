@@ -22,7 +22,7 @@ get '*' do |path|
 			"#{Directory_listing.list(
 				:directory => path, 
 				:sinatra_public => settings.public_folder,
-				)}"
+			)}"
 		else
 			send_file File.join(settings.public_folder, path)
 		end
