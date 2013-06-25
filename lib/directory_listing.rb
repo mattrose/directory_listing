@@ -2,7 +2,7 @@ require 'truncate'
 require 'filesize'
 require 'pathname'
 
-# = Easy Apache-style directory listings for Sinatra.
+# = Easy, CSS-styled, Apache-like directory listings for Sinatra.
 #
 # == Usage
 #
@@ -10,7 +10,7 @@ require 'pathname'
 # app that will provide a directory listing of whatever path you navigate to
 # and let you view any file that is served directly:
 #
-# require 'directory_listing
+# require 'directory_listing'
 #
 # get '*' do |path|
 #   if File.exist?(File.join(settings.public_folder, path))
@@ -37,16 +37,15 @@ require 'pathname'
 #
 # directory # the directory to list
 # sinatra_public # sinatra's public folder - your public folder (and the default) is likely "settings.public_folder"
-# stylesheet # pass a stylesheet to style the page with
-# should_list_invisibles # should the directory listing include invisibles (dotfiles) - "yes" or "no"
+# stylesheet # a stylesheet that will be added to the <head> of the generated directory listing
+# readme # an HTML string that will be appended at the footer of the generated directory listing
+# should_list_invisibles # whether the directory listing should include invisibles (dotfiles) - "yes" or "no"
 # last_modified_format # format for last modified date (http://www.ruby-doc.org/core-2.0/Time.html) - defaults to "%Y-%m-%d %H:%M:%S"
 # filename_truncate_length # (integer) length to truncate file names to - defaults to 40
 #
 # == Styling
 #
-# It's pretty easy to figure out how to style directory_listing by looking at the source. 
-#
-# Some gotchas:
+# It's pretty easy to figure out how to style directory_listing by looking at the source, but here are some gotchas:
 #
 # Every item listed is a <td> element in a table. Directories will have a class of "dir" and regular files will have a class of "file". 
 #
@@ -114,6 +113,7 @@ module Directory_listing
       html << wrap(file, dir, pub)
     end
     html << "\n</table>\n"
+    html << "<br>\n#{options[:readme]}\n" if options[:readme]
     html << "</body>\n</html>\n"
     "#{html}"
   end
