@@ -14,25 +14,25 @@ Sinatra app that will provide a directory listing of whatever path you navigate
 to and let you view any file that is served directly:
 
 ```ruby
-require 'directory_listing
+require 'directory_listing'
 
 get '*' do |path|
-	if File.exist?(File.join(settings.public_folder, path))
-		if File.directory?(File.join(settings.public_folder, path))
-			"#{Directory_listing.list(
-				:directory => path, 
-				:sinatra_public => settings.public_folder,
-			)}"
-		else
-			send_file File.join(settings.public_folder, path)
-		end
-	else
-		not_found
-	end
+  if File.exist?(File.join(settings.public_folder, path))
+    if File.directory?(File.join(settings.public_folder, path))
+      "#{Directory_listing.list(
+        :directory => path, 
+        :sinatra_public => settings.public_folder,
+      )}"
+    else
+      send_file File.join(settings.public_folder, path)
+    end
+  else
+    not_found
+  end
 end
 
 not_found do
-	'Try again.'
+  'Try again.'
 end
 ```
 
@@ -61,16 +61,16 @@ You can style the "File" column with this CSS:
 
 ```css
 table tr > td:first-child { 
-	text-align: left;
+  text-align: left;
 }
 
 Second column:
 table tr > td:first-child + td { 
-	text-align: left;
+  text-align: left;
 }
 
 Third column:
 table tr > td:first-child + td + td { 
-	text-align: left;
+  text-align: left;
 }
 ```
