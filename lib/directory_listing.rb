@@ -1,5 +1,6 @@
 require 'truncate'
 require 'filesize'
+require 'pathname'
 
 # = Easy Apache-style directory listings for Sinatra.
 #
@@ -12,22 +13,22 @@ require 'filesize'
 # require 'directory_listing
 #
 # get '*' do |path|
-# 	if File.exist?(File.join(settings.public_folder, path))
-# 		if File.directory?(File.join(settings.public_folder, path))
-# 			"#{Directory_listing.list(
-# 				:directory => path, 
-# 				:sinatra_public => settings.public_folder,
-# 				)}"
-# 		else
-# 			send_file File.join(settings.public_folder, path)
-# 		end
-# 	else
-# 		not_found
-# 	end
+#   if File.exist?(File.join(settings.public_folder, path))
+#     if File.directory?(File.join(settings.public_folder, path))
+#       "#{Directory_listing.list(
+#         :directory => path, 
+#         :sinatra_public => settings.public_folder,
+#       )}"
+#     else
+#       send_file File.join(settings.public_folder, path)
+#     end
+#   else
+#     not_found
+#   end
 # end
 # 
 # not_found do
-# 	'Try again.'
+#   'Try again.'
 # end
 #
 # Any option key may be omitted except for :directory and :sinatra_public. Explanations of options are below.
@@ -52,17 +53,17 @@ require 'filesize'
 # You can style the "File" column with this CSS:
 # 
 # table tr > td:first-child { 
-# 	text-align: left;
+#   text-align: left;
 # }
 # 
 # Second column:
 # table tr > td:first-child + td { 
-# 	text-align: left;
+#   text-align: left;
 # }
 # 
 # Third column:
 # table tr > td:first-child + td + td { 
-# 	text-align: left;
+#   text-align: left;
 # }
 
 module Directory_listing
@@ -79,8 +80,9 @@ module Directory_listing
   def self.list(options)
     options = @@options.merge options
     raise(ArgumentError, ":directory is required") unless options[:directory]
-		raise(ArgumentError, ":sinatra_public is required") unless options[:sinatra_public]
-		dir = File.join(options[:sinatra_public], options[:directory])
+    raise(ArgumentError, ":sinatra_public is required") unless options[:sinatra_public]
+    pub = options[:sinatra_public]
+    dir = File.join(pub, options[:directory])
 
     if options[:should_list_invisibles]
       $should_list_invisibles = options[:should_list_invisibles]
@@ -109,10 +111,10 @@ module Directory_listing
     files = Array.new
     Dir.foreach(dir, &files.method(:push))
     files.sort.each do |file|
-      html << wrap(file, dir)
+      html << wrap(file, dir, pub)
     end
     html << "\n</table>\n"
-		html << "</body>\n</html>\n"
+    html << "</body>\n</html>\n"
     "#{html}"
   end
   
@@ -131,29 +133,30 @@ module Directory_listing
     end
   end
 
-  def self.name(file, dir)
-    html = ""
+  def self.name(file, dir, pub)
     tfile = file.truncate($filename_truncate_length, '...')
-
+    link = Pathname.new(File.join(dir, file)).relative_path_from(Pathname.new(pub))
+    
+    html = ""
     if File.directory?(File.join(dir, file))
-      html << "\t<td class=\"dir\"><a href='#{file}'>#{tfile}</a></td>"
+      html << "\t<td class='dir'><a href='#{link}'>#{tfile}</a></td>"
     else
-      html << "\t<td class=\"file\"><a href='#{file}'>#{tfile}</td>"
+      html << "\t<td class='file'><a href='#{link}'>#{tfile}</td>"
     end
     "#{html}"
   end
 
-  def self.wrap(file, dir)
+  def self.wrap(file, dir, pub)
     wrapped = ""
     if $should_list_invisibles == "yes"
       wrapped << "\n\t<tr>
-      #{name(file, dir)}
+      #{name(file, dir, pub)}
       #{m_time(file, dir)}
       #{size(file, dir)}\n\t</tr>"
     else
       if file[0] != "."
         wrapped << "\n\t<tr>
-        #{name(file, dir)}
+        #{name(file, dir, pub)}
         #{m_time(file, dir)}
         #{size(file, dir)}\n\t</tr>"
       end
