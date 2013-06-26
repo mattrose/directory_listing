@@ -17,7 +17,7 @@ require 'pathname'
 #     if File.directory?(File.join(settings.public_folder, path))
 #       "#{Directory_listing.list(
 #         :directory => path, 
-#         :sinatra_public => settings.public_folder,
+#         :sinatra_public => settings.public_folder
 #       )}"
 #     else
 #       send_file File.join(settings.public_folder, path)
@@ -100,13 +100,19 @@ module Directory_listing
     end
     
     html = "<html>\n<head>\n"
+    html << "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
     if options[:stylesheet]
       html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"/#{options[:stylesheet].sub(/^[\/]*/,"")}\">\n"
     end
     html << "</head>\n<body>\n"
     html << "<h1>Index of #{options[:directory]}</h1>\n"
+    if options[:directory] != "/"
+      html << "<a href='#{Pathname.new(options[:directory]).parent}'>&larr; Parent directory</a><br><br>"
+    else
+      html << "<a>Root directory</a><br><br>"
+    end
     html << "<table>\n"
-    html << "\t<tr>\n\t\t<th>File</th>\n\t\t<th>Last modified</th>\n\t\t<th>Size</th>\n\t</tr>"
+    html << "\t<tr>\n\t\t<th>File</th>\n\t\t<th>Last modified</th>\n\t\t<th>Size</th>\n\t</tr>\n"
     files = Array.new
     Dir.foreach(dir, &files.method(:push))
     files.sort.each do |file|
