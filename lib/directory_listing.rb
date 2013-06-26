@@ -141,13 +141,17 @@ module Directory_listing
 
   def self.name(file, dir, pub)
     tfile = file.truncate($filename_truncate_length, '...')
-    link = Pathname.new(File.join(dir, file)).relative_path_from(Pathname.new(pub))
+    if (Pathname.new(dir).cleanpath).eql?((Pathname.new(pub)).cleanpath)
+      link = file
+    else
+      link = File.join(dir.split("/").last, file)
+    end
     
     html = ""
     if File.directory?(File.join(dir, file))
       html << "\t<td class='dir'><a href='#{link}'>#{tfile}</a></td>"
     else
-      html << "\t<td class='file'><a href='#{link}'>#{tfile}</td>"
+      html << "\t<td class='file'><a href='#{link}'>#{tfile}</a></td>"
     end
     "#{html}"
   end
