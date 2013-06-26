@@ -115,8 +115,12 @@ module Directory_listing
     html << "\t<tr>\n\t\t<th>File</th>\n\t\t<th>Last modified</th>\n\t\t<th>Size</th>\n\t</tr>\n"
     files = Array.new
     Dir.foreach(dir, &files.method(:push))
-    files.sort.each do |file|
-      html << wrap(file, dir, pub)
+    if files == [".", ".."]
+      html << "\t<tr>\n\t\t<th>No files.</th>\n\t\t<th>-</th>\n\t\t<th>-</th>\n\t</tr>"
+    else
+      files.sort.each do |file|
+        html << wrap(file, dir, pub)
+      end
     end
     html << "\n</table>\n"
     html << "<br>\n#{options[:readme]}\n" if options[:readme]
