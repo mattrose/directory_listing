@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
 	s.name				= 'directory_listing'
-	s.version			= '0.1.0'
+	s.version			= '0.1.1'
 	s.date				= '2013-06-27'
 	s.summary			= "Easy, CSS-styled, Apache-like directory listings for Sinatra."
 	s.description = "A Sinatra extension for generating easy, CSS-styled, Apache-like directory listings."
