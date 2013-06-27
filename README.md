@@ -34,6 +34,15 @@ end
 
 ### options:
 
+Options are passed in a hash:
+
+```ruby
+list({
+  :stylesheet => "stylesheets/styles.css",
+  :readme => "<a>Welcome!</a>"
+})
+```
+
 ```
 stylesheet # a stylesheet that will be added to the <head> of the generated directory listing
 readme # an HTML string that will be appended at the footer of the generated directory listing
