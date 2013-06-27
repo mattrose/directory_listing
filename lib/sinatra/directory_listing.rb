@@ -72,8 +72,6 @@ require 'pathname'
 module Sinatra
   module Directory_listing
     
-    private
-    
     def m_time(file)
       f = File.join(File.join(settings.public_folder, request.fullpath), file)
       "\t<td>#{File.mtime(f).strftime $last_modified_format}</td>"
@@ -166,6 +164,8 @@ module Sinatra
       html << "</body>\n</html>\n"
       "#{html}"
     end
+    
+    private :wrap, :name, :size, :m_time
       
   end
 
