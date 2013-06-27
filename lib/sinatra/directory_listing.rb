@@ -1,5 +1,4 @@
 require 'sinatra/base'
-
 require 'truncate'
 require 'filesize'
 require 'pathname'
@@ -32,6 +31,15 @@ require 'pathname'
 # end
 #
 # == Options
+# 
+# Options are passed in a hash:
+# 
+# list({
+#   :stylesheet => "stylesheets/styles.css",
+#   :readme => "<a>Welcome!</a>"
+# })
+#
+# Available options:
 #
 # stylesheet # a stylesheet that will be added to the <head> of the generated directory listing
 # readme # an HTML string that will be appended at the footer of the generated directory listing
@@ -61,24 +69,22 @@ require 'pathname'
 #   text-align: left;
 # }
 
-
 module Sinatra
   module Directory_listing
     
     private
     
     def m_time(file)
-      file = File.join(settings.public_folder, request.fullpath)
-      time = "\t<td>#{File.mtime(file).strftime $last_modified_format}</td>"
+      f = File.join(File.join(settings.public_folder, request.fullpath), file)
+      "\t<td>#{File.mtime(f).strftime $last_modified_format}</td>"
     end
     
     def size(file)
-      dir = request.path
-      if File.directory?(File.join(dir, file))
+      f = File.join(File.join(settings.public_folder, request.fullpath), file)
+      if File.directory?(f)
         "\t<td>-</td>"
       else
-        file = File.join(settings.public_folder, request.fullpath)
-        size = Filesize.from("#{File.stat(file).size} B").pretty
+        size = Filesize.from("#{File.stat(f).size} B").pretty
         "\t<td>#{size}</td>"
       end
     end
@@ -132,6 +138,7 @@ module Sinatra
       $filename_truncate_length = options[:filename_truncate_length]
       
       html = "<html>\n<head>\n"
+      html << "<title>Index of #{request.path}</title>\n"
       html << "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
       if options[:stylesheet]
         html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"/#{options[:stylesheet].sub(/^[\/]*/,"")}\">\n"
