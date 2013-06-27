@@ -9,20 +9,16 @@ sudo gem install ./directory_listing-x.x.x.gem
 
 ### usage:
 
-```Directory_listing.list``` will return HTML, so the following is a complete 
-Sinatra app that will provide a directory listing of whatever path you navigate 
-to and let you view any file that is served directly:
+```list()``` will return HTML, so the following is a complete Sinatra app that will provide a directory listing of whatever path you navigate to and let you view any file that is served directly:
 
 ```ruby
-require 'directory_listing'
+require 'sinatra'
+require 'sinatra/directory_listing'
 
 get '*' do |path|
   if File.exist?(File.join(settings.public_folder, path))
     if File.directory?(File.join(settings.public_folder, path))
-      "#{Directory_listing.list(
-        :directory => path, 
-        :sinatra_public => settings.public_folder
-      )}"
+      list()
     else
       send_file File.join(settings.public_folder, path)
     end
@@ -36,13 +32,9 @@ not_found do
 end
 ```
 
-Any option key may be omitted except for ```:directory``` and ```:sinatra_public```. Explanations of options are below.
-
 ### options:
 
 ```
-directory # the directory to list
-sinatra_public # sinatra's public folder - your public folder (and the default) is likely "settings.public_folder"
 stylesheet # a stylesheet that will be added to the <head> of the generated directory listing
 readme # an HTML string that will be appended at the footer of the generated directory listing
 should_list_invisibles # whether the directory listing should include invisibles (dotfiles) - "yes" or "no"
