@@ -43,6 +43,8 @@ list({
 })
 ```
 
+Available options:
+
 ```
 stylesheet # a stylesheet that will be added to the <head> of the generated directory listing
 readme # an HTML string that will be appended at the footer of the generated directory listing
