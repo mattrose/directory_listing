@@ -2,6 +2,7 @@ require 'sinatra/base'
 require 'truncate'
 require 'filesize'
 require 'pathname'
+require 'uri'
 
 # = Easy, CSS-styled, Apache-like directory listings for Sinatra.
 #
@@ -73,12 +74,12 @@ module Sinatra
   module Directory_listing
     
     def m_time(file)
-      f = File.join(File.join(settings.public_folder, request.fullpath), file)
+      f = File.join(File.join(settings.public_folder, URI.unescape(request.fullpath)), file)
       "\t<td>#{File.mtime(f).strftime $last_modified_format}</td>"
     end
     
     def size(file)
-      f = File.join(File.join(settings.public_folder, request.fullpath), file)
+      f = File.join(File.join(settings.public_folder, URI.unescape(request.fullpath)), file)
       if File.directory?(f)
         "\t<td>-</td>"
       else
@@ -88,8 +89,9 @@ module Sinatra
     end
     
     def name(file)
+      file = URI.unescape(file)
       tfile = file.truncate($filename_truncate_length, '...')
-      if (Pathname.new(request.path).cleanpath).eql?((Pathname.new(settings.public_folder)).cleanpath)
+      if (Pathname.new(URI.unescape(request.path)).cleanpath).eql?((Pathname.new(settings.public_folder)).cleanpath)
         link = file
       else
         link = File.join(request.fullpath, file)
@@ -101,25 +103,25 @@ module Sinatra
       else
         html << "\t<td class='file'><a href='#{link}'>#{tfile}</a></td>"
       end
-      "#{html}"
+      html
     end
     
     def wrap(file)
-      wrapped = ""
+      html = ""
       if $should_list_invisibles == "yes"
-        wrapped << "\n\t<tr>
+        html << "\n\t<tr>
         #{name(file)}
         #{m_time(file)}
         #{size(file)}\n\t</tr>"
       else
         if file[0] != "."
-          wrapped << "\n\t<tr>
+          html << "\n\t<tr>
           #{name(file)}
           #{m_time(file)}
           #{size(file)}\n\t</tr>"
         end
       end
-      "#{wrapped}"
+      html
     end
             
     def list(o={})
@@ -136,22 +138,22 @@ module Sinatra
       $filename_truncate_length = options[:filename_truncate_length]
       
       html = "<html>\n<head>\n"
-      html << "<title>Index of #{request.path}</title>\n"
+      html << "<title>Index of #{URI.unescape(request.path)}</title>\n"
       html << "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
       if options[:stylesheet]
         html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"/#{options[:stylesheet].sub(/^[\/]*/,"")}\">\n"
       end
       html << "</head>\n<body>\n"
-      html << "<h1>Index of #{request.path}</h1>\n"
-      if request.path != "/"
-        html << "<a href='#{Pathname.new(request.path).parent}'>&larr; Parent directory</a><br><br>"
+      html << "<h1>Index of #{URI.unescape(request.path)}</h1>\n"
+      if URI.unescape(request.path) != "/"
+        html << "<a href='#{Pathname.new(URI.unescape(request.path)).parent}'>&larr; Parent directory</a><br><br>"
       else
         html << "<a>Root directory</a><br><br>"
       end
       html << "<table>\n"
       html << "\t<tr>\n\t\t<th>File</th>\n\t\t<th>Last modified</th>\n\t\t<th>Size</th>\n\t</tr>\n"
       files = Array.new
-      Dir.foreach(File.join(settings.public_folder, request.path), &files.method(:push))
+      Dir.foreach(File.join(settings.public_folder, URI.unescape(request.path)), &files.method(:push))
       if files == [".", ".."]
         html << "\t<tr>\n\t\t<th>No files.</th>\n\t\t<th>-</th>\n\t\t<th>-</th>\n\t</tr>"
       else
@@ -162,7 +164,7 @@ module Sinatra
       html << "\n</table>\n"
       html << "<br>\n#{options[:readme]}\n" if options[:readme]
       html << "</body>\n</html>\n"
-      "#{html}"
+      html
     end
     
     private :wrap, :name, :size, :m_time
