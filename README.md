@@ -48,7 +48,7 @@ Available options:
 ```
 stylesheet # a stylesheet that will be added to the <head> of the generated directory listing
 readme # an HTML string that will be appended at the footer of the generated directory listing
-should_list_invisibles # whether the directory listing should include invisibles (dotfiles) - "yes" or "no"
+should_list_invisibles # whether the directory listing should include invisibles (dotfiles) - "yes" or "no" - defaults to "no"
 last_modified_format # format for last modified date (http://www.ruby-doc.org/core-2.0/Time.html) - defaults to "%Y-%m-%d %H:%M:%S"
 filename_truncate_length # (integer) length to truncate file names to - defaults to 40
 ```
