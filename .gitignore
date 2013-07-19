@@ -1,4 +1,4 @@
 .DS_Store
-*.gem
+build/
 test_app.rb
 public/*
