@@ -3,6 +3,7 @@ require 'truncate'
 require 'filesize'
 require 'pathname'
 require 'uri'
+require 'erb'
 
 # = Easy, CSS-styled, Apache-like directory listings for Sinatra.
 #
@@ -73,53 +74,46 @@ require 'uri'
 module Sinatra
   module Directory_listing
     
-    def list(o={})
-      options = {
-        :should_list_invisibles => false,
-        :last_modified_format => "%Y-%m-%d %H:%M:%S",
-        :filename_truncate_length => 40,
-        :stylesheet => "",
-        :readme => ""
-      }.merge(o)
-      
-      $should_list_invisibles = options[:should_list_invisibles]
-      $last_modified_format = options[:last_modified_format]
-      $filename_truncate_length = options[:filename_truncate_length]
-      
-      html = "<html>\n<head>\n"
-      html << "<title>Index of #{URI.unescape(request.path)}</title>\n"
-      html << "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>\n"
-      if options[:stylesheet]
-        html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"/#{options[:stylesheet].sub(/^[\/]*/,"")}\">\n"
-      end
-      html << "</head>\n<body>\n"
-      html << "<h1>Index of #{URI.unescape(request.path)}</h1>\n"
-      if URI.unescape(request.path) != "/"
-        html << "<a href='#{Pathname.new(URI.unescape(request.path)).parent}'>&larr; Parent directory</a><br><br>"
-      else
-        html << "<a>Root directory</a><br><br>"
-      end
-      html << "<table>\n"
-      html << "\t<tr>\n\t\t<th>File</th>\n\t\t<th>Last modified</th>\n\t\t<th>Size</th>\n\t</tr>\n"
-      files = Array.new
-      Dir.foreach(File.join(settings.public_folder, URI.unescape(request.path)), &files.method(:push))
-      if files == [".", ".."]
-        html << "\t<tr>\n\t\t<th>No files.</th>\n\t\t<th>-</th>\n\t\t<th>-</th>\n\t</tr>"
-      else
-        files.sort.each do |file|
-          html << self.wrap(file)
-        end
-      end
-      html << "\n</table>\n"
-      html << "<br>\n#{options[:readme]}\n" if options[:readme]
-      html << "</body>\n</html>\n"
-      html
+    ##
+    # erb template for page
+    
+    def template
+      "<html>
+      <head>
+        <title>Index of <%= $current_page %></title>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+        <%= $stylesheet %>
+      </head>
+      <body>
+        <h1>Index of <%= $current_page %></h1>
+        <%= $back_to_link %>
+        <br><br>
+  
+        <table>
+          <tr>
+            <th>File</th>
+            <th>Last modified</th>
+            <th>Size</th>
+          </tr>
+          <%= $files_html %>
+        </table>
+  
+        <br>
+        <a><%= $readme if $readme %></a>
+      </body>
+      </html>"
     end
+    
+    ##
+    # Get the mtime for a file. 
     
     def m_time(file)
       f = File.join(File.join(settings.public_folder, URI.unescape(request.fullpath)), file)
       "\t<td>#{File.mtime(f).strftime $last_modified_format}</td>"
     end
+    
+    ##
+    # Get the size for a file. 
     
     def size(file)
       f = File.join(File.join(settings.public_folder, URI.unescape(request.fullpath)), file)
@@ -130,6 +124,9 @@ module Sinatra
         "\t<td>#{size}</td>"
       end
     end
+    
+    ##
+    # Get the name of a file. 
     
     def name(file)
       file = URI.unescape(file)
@@ -149,6 +146,9 @@ module Sinatra
       html
     end
     
+    ##
+    # Generate a single row of data for a file.
+    
     def wrap(file)
       html = ""
       if $should_list_invisibles == true
@@ -165,6 +165,53 @@ module Sinatra
         end
       end
       html
+    end
+    
+    ##
+    # Generate the page.
+    
+    def list(o={})
+      options = {
+        :should_list_invisibles => false,
+        :last_modified_format => "%Y-%m-%d %H:%M:%S",
+        :filename_truncate_length => 40,
+        :stylesheet => "",
+        :readme => ""
+      }.merge(o)
+      
+      $should_list_invisibles = options[:should_list_invisibles]
+      $last_modified_format = options[:last_modified_format]
+      $filename_truncate_length = options[:filename_truncate_length]
+      
+      ##
+      # Start generating strings to be injected into the erb template 
+      
+      $current_page = URI.unescape(request.path)
+      $readme = options[:readme] if options[:readme]
+      $stylesheet = "<link rel='stylesheet' type='text/css' href='/#{options[:stylesheet].sub(/^[\/]*/,"")}'>" if options[:stylesheet]
+      
+      if URI.unescape(request.path) != "/"
+        $back_to_link = "<a href='#{Pathname.new(URI.unescape(request.path)).parent}'>&larr; Parent directory</a>"
+      else
+        $back_to_link = "<a>Root directory</a>"
+      end
+      
+      $files_html = ""
+      files = Array.new
+      Dir.foreach(File.join(settings.public_folder, URI.unescape(request.path)), &files.method(:push))
+      if files == [".", ".."]
+        $files_html << "\t<tr>\n\t\t<th>No files.</th>\n\t\t<th>-</th>\n\t\t<th>-</th>\n\t</tr>"
+      else
+        files.sort.each do |file|
+          $files_html << self.wrap(file)
+        end
+      end
+      
+      ##
+      # Generate and return the complete page from the erb template.  
+      
+      erb = ERB.new(template)
+      erb.result
     end
       
   end
