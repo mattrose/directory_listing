@@ -45,21 +45,18 @@ list({
 
 Available options:
 
-```
-stylesheet # a stylesheet that will be added to the <head> of the generated directory listing
-readme # an HTML string that will be appended at the footer of the generated directory listing
-should_list_invisibles # whether the directory listing should include invisibles (dotfiles) - true or false, defaults to false
-last_modified_format # format for last modified date (http://www.ruby-doc.org/core-2.0/Time.html) - defaults to "%Y-%m-%d %H:%M:%S"
-filename_truncate_length # (integer) length to truncate file names to - defaults to 40
-```
+- ```stylesheet``` - a stylesheet that will be added to the <head> of the generated directory listing
+- ```readme``` - an HTML string that will be appended at the footer of the generated directory listing
+- ```should_list_invisibles``` - whether the directory listing should include invisibles (dotfiles) - true or false, defaults to false
+- ```last_modified_format``` - [format](http://www.ruby-doc.org/core-2.0/Time.html) for last modified date - defaults to "%Y-%m-%d %H:%M:%S"
+- ```filename_truncate_length``` - (integer) length to truncate file names to - defaults to 40
 
 ### styling:
 
 It's pretty easy to figure out how to style ```directory_listing``` by looking at the source, but here are some gotchas:
 
-Every item listed is a ```<td>``` element in a table. Directories will have a class of ```dir``` and regular files will have a class of ```file```. 
-
-You can style the "File" column with this CSS:
+- Every item listed is a ```<td>``` element in a table. Directories will have a class of ```dir``` and regular files will have a class of ```file```. 
+- You can style the "File" column with this CSS:
 
 ```css
 table tr > td:first-child { 
@@ -67,7 +64,7 @@ table tr > td:first-child {
 }
 ```
 
-"Last modified" column:
+- "Last modified" column:
 
 ```css
 table tr > td:first-child + td { 
@@ -75,7 +72,7 @@ table tr > td:first-child + td {
 }
 ```
 
-"Size" column:
+- "Size" column:
 
 ```css
 table tr > td:first-child + td + td { 
