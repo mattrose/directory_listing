@@ -90,6 +90,8 @@ require 'erb'
 module Sinatra
   module Directory_listing
     
+    VERSION = '0.2.2'
+    
     ##
     # erb template for page
     
@@ -125,7 +127,7 @@ module Sinatra
     
     def m_time(file)
       f = File.join(File.join(settings.public_folder, URI.unescape(request.fullpath)), file)
-      "\t<td>#{File.mtime(f).strftime $last_modified_format}</td>"
+      "\t<td>#{File.mtime(f).strftime($last_modified_format)}</td>"
     end
     
     ##

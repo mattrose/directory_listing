@@ -1,4 +1,4 @@
 .DS_Store
-build/
+pkg/
 test_app.rb
 public/*
