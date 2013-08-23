@@ -90,8 +90,6 @@ require 'erb'
 module Sinatra
   module Directory_listing
     
-    VERSION = '0.2.2'
-    
     ##
     # Get the mtime for a file. 
     

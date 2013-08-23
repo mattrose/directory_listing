@@ -1,8 +1,9 @@
 require File.join(Dir.pwd, 'lib/sinatra/directory_listing.rb')
+require File.join(Dir.pwd, 'lib/sinatra/directory_listing/version.rb')
 
 Gem::Specification.new do |s|
   s.name        = 'directory_listing'
-  s.version     = Sinatra::Directory_listing::VERSION
+  s.version     = Directory_listing::VERSION
   s.date        = Time.now.strftime("%Y-%m-%d")
   s.summary     = "Easy, CSS-styled, Apache-like directory listings for Sinatra."
   s.description = "A Sinatra extension for generating easy, CSS-styled, Apache-like directory listings."
