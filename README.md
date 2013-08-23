@@ -1,13 +1,13 @@
 ### directory_listing: easy, CSS-styled, Apache-like directory listings for Sinatra.
 
-### build from source:
+### Build from source:
 
 ```bash
 gem build directory_listing.gemspec
 sudo gem install ./directory_listing-x.x.x.gem
 ```
 
-### usage:
+### Usage:
 
 ```list()``` will return HTML, so the following is a complete Sinatra app that will provide a directory listing of whatever path you navigate to and let you view any file that is served directly:
 
@@ -32,7 +32,7 @@ not_found do
 end
 ```
 
-### options:
+### Options:
 
 Options are passed in a hash:
 
@@ -48,10 +48,10 @@ Available options:
 - ```stylesheet``` - a stylesheet that will be added to the <head> of the generated directory listing
 - ```readme``` - an HTML string that will be appended at the footer of the generated directory listing
 - ```should_list_invisibles``` - whether the directory listing should include invisibles (dotfiles) - true or false, defaults to false
-- ```last_modified_format``` - [format](http://www.ruby-doc.org/core-2.0/Time.html) for last modified date - defaults to "%Y-%m-%d %H:%M:%S"
+- ```last_modified_format``` - [format](http://www.ruby-doc.org/core-2.0/Time.html) for last modified date - defaults to ```%Y-%m-%d %H:%M:%S```
 - ```filename_truncate_length``` - (integer) length to truncate file names to - defaults to 40
 
-### styling:
+### Styling:
 
 It's pretty easy to figure out how to style ```directory_listing``` by looking at the source, but here are some gotchas:
 
