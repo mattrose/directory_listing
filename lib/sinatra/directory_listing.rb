@@ -145,13 +145,28 @@ module Sinatra
     # Get the name of the file and its link.
     
     def name(file)
+      
+      ##
+      # Make sure we're working with an unescaped file name and truncate it.
+      # URI.unescape seems to work best to decode uris. 
+      
       file = URI.unescape(file)
-      tfile = file.truncate($filename_truncate_length, '...')
-      if (Pathname.new(URI.unescape(request.path)).cleanpath).eql?((Pathname.new(settings.public_folder)).cleanpath)
+      file_truncated = file.truncate($filename_truncate_length, '...')
+      
+      ##
+      # If the requested resource is in the root public directory, the link is 
+      # just the resource itself without the public directory path as well. 
+      
+      requested = Pathname.new(URI.unescape(request.path)).cleanpath
+      public_folder = Pathname.new(settings.public_folder).cleanpath
+      if requested.eql?(public_folder)
         link = file
       else
         link = File.join(request.fullpath, file)
       end
+      
+      ##
+      # Add a class of "dir" to directories and "file" to files.
     
       html = ""
       if File.directory?(File.join(settings.public_folder, link))
@@ -159,7 +174,16 @@ module Sinatra
       else
         html << "\t<td class='file'>"
       end
-      html << "<a href='#{link}'>#{tfile}</a></td>"
+      
+      ##
+      # Append the rest of the html. 
+      # 
+      # I haven't found a URI escaping library that will handle this
+      # gracefully, so for now, we're going to just take care of spaces and 
+      # apostrophes ourselves. 
+      
+      link = link.gsub(" ", "%20").gsub("'", "%27")
+      html << "<a href='#{link}'>#{file_truncated}</a></td>"
       html
     end
     
