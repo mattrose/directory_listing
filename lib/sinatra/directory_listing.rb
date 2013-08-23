@@ -93,36 +93,6 @@ module Sinatra
     VERSION = '0.2.2'
     
     ##
-    # erb template for page
-    
-    def template
-      "<html>
-      <head>
-        <title>Index of <%= $current_page %></title>
-        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
-        <%= $stylesheet %>
-      </head>
-      <body>
-        <h1>Index of <%= $current_page %></h1>
-        <%= $back_to_link %>
-        <br><br>
-  
-        <table>
-          <tr>
-            <th>File</th>
-            <th>Last modified</th>
-            <th>Size</th>
-          </tr>
-          <%= $files_html %>
-        </table>
-  
-        <br>
-        <a><%= $readme if $readme %></a>
-      </body>
-      </html>"
-    end
-    
-    ##
     # Get the mtime for a file. 
     
     def m_time(file)
@@ -250,7 +220,13 @@ module Sinatra
             <th>-</th>
           </tr>"
       else
-        files.sort.each do |file|
+        
+        ##
+        # TODO: This is where files array should be sorted by name, mtime, or 
+        # size. Once sorted, they can be wrapped in html and the page can be 
+        # generated. 
+        
+        files.each do |file|
           $files_html << self.wrap(file)
         end
       end
@@ -258,6 +234,8 @@ module Sinatra
       ##
       # Generate and return the complete page from the erb template.  
       
+      template_file = File.join(File.dirname(__FILE__), 'directory_listing/layout.erb')
+      template = File.open(template_file, 'r').read
       erb = ERB.new(template)
       erb.result
     end
