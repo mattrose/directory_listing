@@ -1,3 +1,7 @@
+module Sinatra
+  module Directory_listing
+    
+    LAYOUT = <<-EOF
 <html>
 <head>
   <title>Index of <%= $current_page %></title>
@@ -22,3 +26,7 @@
   <a><%= $readme if $readme %></a>
 </body>
 </html>
+    EOF
+    
+  end
+end

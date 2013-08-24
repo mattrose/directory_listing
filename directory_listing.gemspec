@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Richard Myers"]
   s.email       = 'rick.myers@me.com'
   s.license     = 'WTFPL'
-  s.files       = ["lib/sinatra/directory_listing.rb"]
+  s.files       = `git ls-files`.split($/)
   s.homepage    = 'https://rubygems.org/gems/directory_listing'
   
   s.add_dependency 'filesize', '>=0.0.2'

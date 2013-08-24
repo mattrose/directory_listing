@@ -90,98 +90,17 @@ require 'erb'
 module Sinatra
   module Directory_listing
     
-    ##
-    # Get the mtime for a file. 
-    
-    def m_time(file)
-      f = File.join(File.join(settings.public_folder, URI.unescape(request.fullpath)), file)
-      "\t<td>#{File.mtime(f).strftime($last_modified_format)}</td>"
-    end
-    
-    ##
-    # Get the size for a file. 
-    
-    def size(file)
-      f = File.join(File.join(settings.public_folder, URI.unescape(request.fullpath)), file)
-      if File.directory?(f)
-        "\t<td>-</td>"
-      else
-        size = Filesize.from("#{File.stat(f).size} B").pretty
-        "\t<td>#{size}</td>"
-      end
-    end
-    
-    ##
-    # Get the name of the file and its link.
-    
-    def name(file)
-      
-      ##
-      # Make sure we're working with an unescaped file name and truncate it.
-      # URI.unescape seems to work best to decode uris. 
-      
-      file = URI.unescape(file)
-      file_truncated = file.truncate($filename_truncate_length, '...')
-      
-      ##
-      # If the requested resource is in the root public directory, the link is 
-      # just the resource itself without the public directory path as well. 
-      
-      requested = Pathname.new(URI.unescape(request.path)).cleanpath
-      public_folder = Pathname.new(settings.public_folder).cleanpath
-      if requested.eql?(public_folder)
-        link = file
-      else
-        link = File.join(request.fullpath, file)
-      end
-      
-      ##
-      # Add a class of "dir" to directories and "file" to files.
-    
-      html = ""
-      if File.directory?(File.join(settings.public_folder, link))
-        html << "\t<td class='dir'>"
-      else
-        html << "\t<td class='file'>"
-      end
-      
-      ##
-      # Append the rest of the html. 
-      # 
-      # I haven't found a URI escaping library that will handle this
-      # gracefully, so for now, we're going to just take care of spaces and 
-      # apostrophes ourselves. 
-      
-      link = link.gsub(" ", "%20").gsub("'", "%27")
-      html << "<a href='#{link}'>#{file_truncated}</a></td>"
-      html
-    end
-    
-    ##
-    # Generate a single row of data for a file.
-    
-    def wrap(file)
-      html = ""
-      if $should_list_invisibles == true
-        html << "\n\t<tr>
-        #{self.name(file)}
-        #{self.m_time(file)}
-        #{self.size(file)}\n\t</tr>"
-      else
-        if file[0] != "."
-          html << "\n\t<tr>
-          #{self.name(file)}
-          #{self.m_time(file)}
-          #{self.size(file)}\n\t</tr>"
-        end
-      end
-      html
-    end
+    require_relative 'directory_listing/version.rb'
+    require_relative 'directory_listing/layout.rb'
+    require_relative 'directory_listing/resource.rb'
     
     ##
     # Generate the page.
     
     def list(o={})
+      
+      ##
+      # Set options. 
       options = {
         :should_list_invisibles => false,
         :last_modified_format => "%Y-%m-%d %H:%M:%S",
@@ -189,10 +108,13 @@ module Sinatra
         :stylesheet => "",
         :readme => ""
       }.merge(o)
-      
       $should_list_invisibles = options[:should_list_invisibles]
       $last_modified_format = options[:last_modified_format]
       $filename_truncate_length = options[:filename_truncate_length]
+      
+      $public_folder = settings.public_folder
+      $request_path = request.path
+      $request_fullpath = request.fullpath
       
       ##
       # Start generating strings to be injected into the erb template 
@@ -207,9 +129,18 @@ module Sinatra
         $back_to_link = "<a>Root directory</a>"
       end
       
-      $files_html = ""
+      ##
+      # Get an array of files to be listed. 
+      
       files = Array.new
-      Dir.foreach(File.join(settings.public_folder, URI.unescape(request.path)), &files.method(:push))
+      Dir.foreach(File.join(settings.public_folder, URI.unescape(request.path))) do |file|
+        files.push(file)
+      end
+
+      ##
+      # If the only thing in the array are invisible files, display a "No files" message.
+      
+      $files_html = ""
       if files == [".", ".."]
         $files_html << "
           <tr>
@@ -220,21 +151,30 @@ module Sinatra
       else
         
         ##
-        # TODO: This is where files array should be sorted by name, mtime, or 
-        # size. Once sorted, they can be wrapped in html and the page can be 
-        # generated. 
+        # Otherwise, create an array of Resources:
         
-        files.each do |file|
-          $files_html << self.wrap(file)
+        resources = Array.new
+        Dir.foreach(File.join(settings.public_folder, URI.unescape(request.path))) do |resource|
+          resources.push(Resource.new(resource))
+        end
+        
+        ##
+        # TODO: sort the resources. 
+        
+        sorted_resources = Resource.sort(resources, nil, nil)
+
+        ##
+        # Finally, generate the html of the list.
+        
+        sorted_resources.each do |resource|
+          $files_html << resource.wrap
         end
       end
       
       ##
       # Generate and return the complete page from the erb template.  
       
-      template_file = File.join(File.dirname(__FILE__), 'directory_listing/layout.erb')
-      template = File.open(template_file, 'r').read
-      erb = ERB.new(template)
+      erb = ERB.new(LAYOUT)
       erb.result
     end
       
