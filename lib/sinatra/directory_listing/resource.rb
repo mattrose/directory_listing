@@ -79,6 +79,13 @@ class Resource
     html = ""
     if File.directory?(File.join($public_folder, link))
       html << "\t<td class='dir'>"
+      
+      ##
+      # Append the sorting information if the current directory is sorted
+      
+      if $request_params["sortby"] && $request_params["direction"]
+        link << "?sortby=" + $request_params["sortby"] + "&direction=" + $request_params["direction"]
+      end
     else
       html << "\t<td class='file'>"
     end
@@ -91,6 +98,7 @@ class Resource
     # apostrophes ourselves. 
 
     link = link.gsub(" ", "%20").gsub("'", "%27")
+    
     html << "<a href='#{link}'>#{file_truncated}</a></td>"
     
     return html

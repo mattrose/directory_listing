@@ -93,7 +93,7 @@ module Sinatra
     require_relative 'directory_listing/version.rb'
     require_relative 'directory_listing/layout.rb'
     require_relative 'directory_listing/resource.rb'
-    
+
     ##
     # Generate the page.
     
@@ -115,21 +115,32 @@ module Sinatra
       $filename_truncate_length = options[:filename_truncate_length]
       
       ##
-      # Get the public folder and request path and store in globals
-      # to be used by the Resource class.
+      # Get the public folder, request path, and parameters and 
+      # store in globals to be used by the Resource class.
       
       $public_folder = settings.public_folder
       $request_path = request.path
+      $request_params = request.params
       
       ##
       # Start generating strings to be injected into the erb template 
       
       $current_page = URI.unescape(request.path)
       $readme = options[:readme] if options[:readme]
-      $stylesheet = "<link rel='stylesheet' type='text/css' href='/#{options[:stylesheet].sub(/^[\/]*/,"")}'>" if options[:stylesheet]
+      if options[:stylesheet]
+        $stylesheet = "<link rel='stylesheet' type='text/css' href='/#{options[:stylesheet].sub(/^[\/]*/,"")}'>"
+      end
+      
+      ##
+      # Generate the "back to" link
+      # Append the sorting information if the current directory is sorted.
       
       if URI.unescape(request.path) != "/"
-        $back_to_link = "<a href='#{Pathname.new(URI.unescape(request.path)).parent}'>&larr; Parent directory</a>"
+        back_link = Pathname.new(URI.unescape(request.path)).parent
+        if $request_params["sortby"] && $request_params["direction"]
+          back_link = back_link.to_s + "?sortby=" + $request_params["sortby"] + "&direction=" + $request_params["direction"]
+        end
+        $back_to_link = "<a href='#{back_link}'>&larr; Parent directory</a>"
       else
         $back_to_link = "<a>Root directory</a>"
       end
@@ -164,49 +175,63 @@ module Sinatra
         end
         
         ##
-        # Get the sortby and direction parameters ("file" and "ascending", by default).
-        
-        sort_item = "file"
-        sort_direction = "ascending"
-        sort_item = request.params["sortby"] if request.params["sortby"]
-        sort_direction = request.params["direction"] if request.params["direction"]
+        # Get the sortby and direction parameters ("file" and "ascending", by 
+        # default).
+
+        $sort_item = "file"
+        $sort_direction = "ascending"
+        $sort_item = $request_params["sortby"] if $request_params["sortby"]
+        $sort_direction = $request_params["direction"] if $request_params["direction"]
         
         ##
         # Sort the resources. 
-        # The second and third arguments are what to sort by ("file", "mtime", or "size"),
-        # and whether to sort in order ("ascending") or reverse ("descending").
+        # The second and third arguments are what to sort by ("file", "mtime", 
+        # or "size"), and whether to sort in order ("ascending") or reverse 
+        # ("descending").
         
-        sorted_resources = Resource.sort(resources, sort_item, sort_direction)
+        sorted_resources = Resource.sort(resources, $sort_item, $sort_direction)
         
         ##
-        # Set display variables based on sorting variables
+        # Set display variables and sort links based on sorting variables
         
-        case sort_item
+        file_link_dir = mtime_link_dir = sortby_link_dir = "ascending"
+        
+        case $sort_item
         when "file"
           $sort_item_display = "alphabetically"
-          case sort_direction
+          case $sort_direction
           when "ascending"
             $sort_direction_display = ""
+            file_link_dir = "descending"
           when "descending"
             $sort_direction_display = "reversed"
+            file_link_dir = "ascending"
           end
         when "mtime"
           $sort_item_display = "by modification date"
-          case sort_direction
+          case $sort_direction
           when "ascending"
             $sort_direction_display = "oldest to newest"
+            mtime_link_dir = "descending"
           when "descending"
             $sort_direction_display = "newest to oldest"
+            mtime_link_dir = "ascending"
           end
         when "size"
           $sort_item_display = "by size"
-          case sort_direction
+          case $sort_direction
           when "ascending"
             $sort_direction_display = "smallest to largest"
+            sortby_link_dir = "descending"
           when "descending"
             $sort_direction_display = "largest to smallest"
+            sortby_link_dir = "ascending"
           end
         end
+        
+        $file_sort_link = "?sortby=file&direction=#{file_link_dir}"
+        $mtime_sort_link = "?sortby=mtime&direction=#{mtime_link_dir}"
+        $size_sort_link = "?sortby=size&direction=#{sortby_link_dir}"
         
         ##
         # Finally, generate the html from the array of Resources. 

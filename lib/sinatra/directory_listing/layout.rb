@@ -15,9 +15,9 @@ module Sinatra
 
   <table>
     <tr>
-      <th><a href='#file'>File</a></th>
-      <th><a href='#mtime'>Last modified</a></th>
-      <th><a href='#size'>Size</a></th>
+      <th><a href='<%= $file_sort_link %>'>File</a></th>
+      <th><a href='<%= $mtime_sort_link %>'>Last modified</a></th>
+      <th><a href='<%= $size_sort_link %>'>Size</a></th>
     </tr>
     <%= $files_html %>
   </table>
