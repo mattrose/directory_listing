@@ -4,7 +4,7 @@ module Sinatra
     LAYOUT = <<-EOF
 <html>
 <head>
-  <title>Index of <%= $current_page %></title>
+  <title>Index of <%= $current_page %>, sorted <%= $sort_item_display %> <%= $sort_direction_display %></title>
   <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
   <%= $stylesheet %>
 </head>
@@ -15,7 +15,7 @@ module Sinatra
 
   <table>
     <tr>
-      <th><a href='#name'>File</a></th>
+      <th><a href='#file'>File</a></th>
       <th><a href='#mtime'>Last modified</a></th>
       <th><a href='#size'>Size</a></th>
     </tr>

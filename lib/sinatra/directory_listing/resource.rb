@@ -5,11 +5,11 @@ class Resource
   # Each resource object has accessors for its file name, regular name, 
   # size and mtime, as well as those components wrapped in html. 
   
-  attr_accessor :file, :name, :name_html, :mtime, :mtime_html, :size, :size_html
+  attr_accessor :file, :name_html, :mtime, :mtime_html, :size, :size_html
   
   def initialize(file)
     @file = file
-    @name, @name_html = set_name(file)
+    @name_html = set_name(file)
     @mtime, @mtime_html = set_mtime(file)
     @size, @size_html = set_size(file)
   end
@@ -18,7 +18,7 @@ class Resource
   # Get the mtime for a file. 
 
   def set_mtime(file)
-    f = File.join(File.join($public_folder, URI.unescape($request_fullpath)), file)
+    f = File.join(File.join($public_folder, URI.unescape($request_path)), file)
     html = "\t<td>#{File.mtime(f).strftime($last_modified_format)}</td>"
     
     ##
@@ -33,7 +33,7 @@ class Resource
   def set_size(file)
     html = ""
     size = ''
-    f = File.join(File.join($public_folder, URI.unescape($request_fullpath)), file)
+    f = File.join(File.join($public_folder, URI.unescape($request_path)), file)
     if File.directory?(f)
       size = 0
       html = "\t<td>-</td>"
@@ -70,7 +70,7 @@ class Resource
     if requested.eql?(pub_folder)
       link = file
     else
-      link = File.join($request_fullpath, file)
+      link = File.join($request_path, file)
     end
 
     ##
@@ -93,7 +93,7 @@ class Resource
     link = link.gsub(" ", "%20").gsub("'", "%27")
     html << "<a href='#{link}'>#{file_truncated}</a></td>"
     
-    return [nil, html]
+    return html
   end
 
   ##
@@ -124,8 +124,9 @@ class Resource
   # Direction should be "ascending" or "descending"
   
   def self.sort(resource_array, sortby, direction)
-    # resource_array.sort_by {|a| a.send(sortby)}
-    resource_array
+    new_array = resource_array.sort_by {|a| a.send(sortby)}
+    new_array.reverse! if direction == "descending"
+    new_array
   end
 
 end

@@ -100,7 +100,8 @@ module Sinatra
     def list(o={})
       
       ##
-      # Set options. 
+      # Set default options. 
+      
       options = {
         :should_list_invisibles => false,
         :last_modified_format => "%Y-%m-%d %H:%M:%S",
@@ -108,13 +109,17 @@ module Sinatra
         :stylesheet => "",
         :readme => ""
       }.merge(o)
+      
       $should_list_invisibles = options[:should_list_invisibles]
       $last_modified_format = options[:last_modified_format]
       $filename_truncate_length = options[:filename_truncate_length]
       
+      ##
+      # Get the public folder and request path and store in globals
+      # to be used by the Resource class.
+      
       $public_folder = settings.public_folder
       $request_path = request.path
-      $request_fullpath = request.fullpath
       
       ##
       # Start generating strings to be injected into the erb template 
@@ -138,7 +143,7 @@ module Sinatra
       end
 
       ##
-      # If the only thing in the array are invisible files, display a "No files" message.
+      # If the only thing in the array are invisible files, display a "No files" listing.
       
       $files_html = ""
       if files == [".", ".."]
@@ -159,12 +164,52 @@ module Sinatra
         end
         
         ##
-        # TODO: sort the resources. 
+        # Get the sortby and direction parameters ("file" and "ascending", by default).
         
-        sorted_resources = Resource.sort(resources, nil, nil)
-
+        sort_item = "file"
+        sort_direction = "ascending"
+        sort_item = request.params["sortby"] if request.params["sortby"]
+        sort_direction = request.params["direction"] if request.params["direction"]
+        
         ##
-        # Finally, generate the html of the list.
+        # Sort the resources. 
+        # The second and third arguments are what to sort by ("file", "mtime", or "size"),
+        # and whether to sort in order ("ascending") or reverse ("descending").
+        
+        sorted_resources = Resource.sort(resources, sort_item, sort_direction)
+        
+        ##
+        # Set display variables based on sorting variables
+        
+        case sort_item
+        when "file"
+          $sort_item_display = "alphabetically"
+          case sort_direction
+          when "ascending"
+            $sort_direction_display = ""
+          when "descending"
+            $sort_direction_display = "reversed"
+          end
+        when "mtime"
+          $sort_item_display = "by modification date"
+          case sort_direction
+          when "ascending"
+            $sort_direction_display = "oldest to newest"
+          when "descending"
+            $sort_direction_display = "newest to oldest"
+          end
+        when "size"
+          $sort_item_display = "by size"
+          case sort_direction
+          when "ascending"
+            $sort_direction_display = "smallest to largest"
+          when "descending"
+            $sort_direction_display = "largest to smallest"
+          end
+        end
+        
+        ##
+        # Finally, generate the html from the array of Resources. 
         
         sorted_resources.each do |resource|
           $files_html << resource.wrap
