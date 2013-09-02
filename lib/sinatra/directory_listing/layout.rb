@@ -23,7 +23,7 @@ module Sinatra
   </table>
 
   <br>
-  <a><%= $readme if $readme %></a>
+  <a><%= $readme %></a>
 </body>
 </html>
     EOF
