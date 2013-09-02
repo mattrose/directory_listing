@@ -77,7 +77,7 @@ class Resource
     # Add a class of "dir" to directories and "file" to files.
 
     html = ""
-    if File.directory?(File.join($public_folder, link))
+    if File.directory?(URI.unescape(File.join($public_folder, link)))
       html << "\t<td class='dir'>"
       
       ##
@@ -98,7 +98,6 @@ class Resource
     # apostrophes ourselves. 
 
     link = link.gsub(" ", "%20").gsub("'", "%27")
-    
     html << "<a href='#{link}'>#{file_truncated}</a></td>"
     
     return html
