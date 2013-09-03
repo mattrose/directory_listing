@@ -1,10 +1,17 @@
 ### directory_listing: easy, CSS-styled, Apache-like directory listings for Sinatra.
 
-### Build from source:
+### Install:
+
+For regaulr use:
 
 ```bash
-gem build directory_listing.gemspec
-sudo gem install ./directory_listing-x.x.x.gem
+(sudo) gem install directory_listing
+```
+
+Or from source:
+
+```bash
+rake install
 ```
 
 ### Usage:
