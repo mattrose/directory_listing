@@ -2,7 +2,7 @@
 
 ### Install:
 
-For regaulr use:
+For regular use:
 
 ```bash
 (sudo) gem install directory_listing
