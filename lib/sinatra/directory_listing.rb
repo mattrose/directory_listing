@@ -143,7 +143,7 @@ module Sinatra
       # Append the sorting information if the current directory is sorted.
       
       if URI.unescape(request.path) != "/"
-        back_link = Pathname.new(URI.unescape(request.path)).parent
+        back_link = Pathname.new(request.path).parent
         if $request_params["sortby"] && $request_params["direction"]
           back_link = back_link.to_s + "?sortby=" + $request_params["sortby"] + "&direction=" + $request_params["direction"]
         end
