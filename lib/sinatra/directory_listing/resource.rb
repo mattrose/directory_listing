@@ -120,7 +120,7 @@ class Resource
         #{@name_html}
         #{@mtime_html}
         #{@size_html}
-        \t</tr>"
+        </tr>"
       end
     end
     html
