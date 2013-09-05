@@ -15,20 +15,20 @@ class Resource
   end
     
   ##
-  # Get the mtime for a file. 
+  # Set the mtime for a file. 
+  #
+  # Returns the mtime as a Time object so it can be sorted.
 
   def set_mtime(file)
     f = File.join(File.join($public_folder, URI.unescape($request_path)), file)
     html = "\t<td>#{File.mtime(f).strftime($last_modified_format)}</td>"
-    
-    ##
-    # Return the mtime as a Time object so it can be sorted. 
-    
     return [File.mtime(f), html]
   end
 
   ##
-  # Get the size for a file. 
+  # Set the size for a file. 
+  #
+  # Returns the size as number.
 
   def set_size(file)
     html = ""
@@ -42,15 +42,11 @@ class Resource
       converted = Filesize.from("#{File.stat(f).size} B").pretty
       html = "\t<td>#{converted}</td>"
     end
-    
-    ##
-    # Return the mtime as a Time object so it can be sorted.
-    
     return [size, html]
   end
 
   ##
-  # Get the name of the file and its link.
+  # Set the name of the file and its link.
 
   def set_name(file)
 
