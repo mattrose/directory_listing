@@ -23,6 +23,7 @@ For regular use:
 Or from source:
 
 ```bash
+bundle install
 rake install
 ```
 
