@@ -60,4 +60,51 @@ class DirectoryListingTest < Test::Unit::TestCase
     assert (last_response.body.include?('/should_list_invisibles/.') and 
       last_response.body.include?('/should_list_invisibles/..'))
   end
+
+  ##
+  # test sorting
+
+  def files_array(body)
+    files = Array.new
+    body.each_line do |line|
+      files << $& if /(\d)k.dat/.match(line)
+    end
+    files
+  end
+
+  def test_sorting_name_ascending
+    get '/sorting?sortby=file&direction=ascending'
+    files = files_array(last_response.body)
+    assert_equal ["1k.dat", "2k.dat", "3k.dat"], files
+  end
+
+  def test_sorting_name_descending
+    get '/sorting?sortby=file&direction=descending'
+    files = files_array(last_response.body)
+    assert_equal ["3k.dat", "2k.dat", "1k.dat"], files
+  end
+  
+  def test_sorting_mtime_ascending
+    get '/sorting?sortby=mtime&direction=ascending'
+    files = files_array(last_response.body)
+    assert_equal ["2k.dat", "3k.dat", "1k.dat"], files
+  end
+
+  def test_sorting_mtime_descending
+    get '/sorting?sortby=mtime&direction=descending'
+    files = files_array(last_response.body)
+    assert_equal ["1k.dat", "3k.dat", "2k.dat"], files
+  end
+
+  def test_sorting_size_ascending
+    get '/sorting?sortby=size&direction=ascending'
+    files = files_array(last_response.body)
+    assert_equal ["1k.dat", "2k.dat", "3k.dat"], files
+  end
+
+  def test_sorting_size_descending
+    get '/sorting?sortby=size&direction=descending'
+    files = files_array(last_response.body)
+    assert_equal ["3k.dat", "2k.dat", "1k.dat"], files
+  end
 end
