@@ -2,7 +2,7 @@
 
 ### Description
 
-```directory_listing``` is a Sinatra plugin that generates Apache-like directory listings. It was designed to be:
+```directory_listing``` is a [Sinatra](http://sinatrarb.com) plugin that generates Apache-like directory listings. It was designed to be:
 
 1. Easy to use and configure
 2. Style-able with CSS
