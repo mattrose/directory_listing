@@ -95,8 +95,8 @@ module Sinatra
         end
         
         ##
-        # Get the sortby and direction parameters ("file" and "ascending", by 
-        # default).
+        # Get the sortby and direction parameters 
+        # ("file" and "ascending" by default).
 
         page.sort_item = "file"
         page.sort_direction = "ascending"
@@ -114,45 +114,13 @@ module Sinatra
         ##
         # Set display variables and sort links based on sorting variables
         
-        file_link_dir = mtime_link_dir = sortby_link_dir = "ascending"
-        
-        case page.sort_item
-        when "file"
-          page.sort_item_display = "alphabetically"
-          case page.sort_direction
-          when "ascending"
-            page.sort_direction_display = ""
-            file_link_dir = "descending"
-          when "descending"
-            page.sort_direction_display = "reversed"
-            file_link_dir = "ascending"
-          end
-        when "mtime"
-          page.sort_item_display = "by modification date"
-          case page.sort_direction
-          when "ascending"
-            page.sort_direction_display = "oldest to newest"
-            mtime_link_dir = "descending"
-          when "descending"
-            page.sort_direction_display = "newest to oldest"
-            mtime_link_dir = "ascending"
-          end
-        when "size"
-          page.sort_item_display = "by size"
-          case page.sort_direction
-          when "ascending"
-            page.sort_direction_display = "smallest to largest"
-            sortby_link_dir = "descending"
-          when "descending"
-            page.sort_direction_display = "largest to smallest"
-            sortby_link_dir = "ascending"
-          end
-        end
-        
-        page.file_sort_link = "?sortby=file&direction=#{file_link_dir}"
-        page.mtime_sort_link = "?sortby=mtime&direction=#{mtime_link_dir}"
-        page.size_sort_link = "?sortby=size&direction=#{sortby_link_dir}"
-        
+        page.file_sort_link,
+        page.mtime_sort_link,
+        page.size_sort_link,
+        page.sort_item_display,
+        page.sort_direction_display = 
+          page.sorting_info(page.sort_item, page.sort_direction)
+
         ##
         # Finally, generate the html from the array of Resources. 
         
