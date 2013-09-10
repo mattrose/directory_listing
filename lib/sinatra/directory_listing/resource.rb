@@ -1,13 +1,16 @@
 class Resource
-  
+ 
+  require_relative 'page.rb'
+
   ##
   # Class definition for a single resource to be listed. 
   # Each resource object has accessors for its file name, regular name, 
   # size and mtime, as well as those components wrapped in html. 
+
+  attr_accessor :file, :page, :name_html, :mtime, :mtime_html, :size, :size_html
   
-  attr_accessor :file, :name_html, :mtime, :mtime_html, :size, :size_html
-  
-  def initialize(file)
+  def initialize(file, page)
+    @page = page
     @file = file
     @name_html = set_name(file)
     @mtime, @mtime_html = set_mtime(file)
@@ -20,8 +23,8 @@ class Resource
   # Returns the mtime as a Time object so it can be sorted.
 
   def set_mtime(file)
-    f = File.join(File.join($public_folder, URI.unescape($request_path)), file)
-    html = "\t<td>#{File.mtime(f).strftime($last_modified_format)}</td>"
+    f = File.join(File.join(@page.public_folder, URI.unescape(@page.request_path)), file)
+    html = "\t<td>#{File.mtime(f).strftime(@page.last_modified_format)}</td>"
     return [File.mtime(f), html]
   end
 
@@ -33,7 +36,7 @@ class Resource
   def set_size(file)
     html = ""
     size = ''
-    f = File.join(File.join($public_folder, URI.unescape($request_path)), file)
+    f = File.join(File.join(@page.public_folder, URI.unescape(@page.request_path)), file)
     if File.directory?(f)
       size = 0
       html = "\t<td>-</td>"
@@ -55,32 +58,32 @@ class Resource
     # URI.unescape seems to work best to decode uris. 
 
     file = URI.unescape(file)
-    file_truncated = file.truncate($filename_truncate_length, '...')
+    file_truncated = file.truncate(@page.filename_truncate_length, '...')
 
     ##
     # If the requested resource is in the root public directory, the link is 
     # just the resource itself without the public directory path as well. 
 
-    requested = Pathname.new(URI.unescape($request_path)).cleanpath
-    pub_folder = Pathname.new($public_folder).cleanpath
+    requested = Pathname.new(URI.unescape(@page.request_path)).cleanpath
+    pub_folder = Pathname.new(@page.public_folder).cleanpath
     if requested.eql?(pub_folder)
       link = file
     else
-      link = File.join($request_path, file)
+      link = File.join(@page.request_path, file)
     end
 
     ##
     # Add a class of "dir" to directories and "file" to files.
 
     html = ""
-    if File.directory?(URI.unescape(File.join($public_folder, link)))
+    if File.directory?(URI.unescape(File.join(@page.public_folder, link)))
       html << "\t<td class='dir'>"
       
       ##
       # Append the sorting information if the current directory is sorted
       
-      if $request_params["sortby"] && $request_params["direction"]
-        link << "?sortby=" + $request_params["sortby"] + "&direction=" + $request_params["direction"]
+      if @page.request_params["sortby"] && @page.request_params["direction"]
+        link << "?sortby=" + @page.request_params["sortby"] + "&direction=" + @page.request_params["direction"]
       end
     else
       html << "\t<td class='file'>"
@@ -104,7 +107,7 @@ class Resource
   
   def wrap
     html = ""
-    if $should_list_invisibles == true
+    if @page.should_list_invisibles == true
       html << "\n\t<tr>
       #{@name_html}
       #{@mtime_html}
