@@ -1,5 +1,8 @@
 class Page 
 
+  ##
+  # Class definition for the page to be generated.
+
   attr_accessor :should_list_invisibles, 
                 :last_modified_format, 
                 :filename_truncate_length, 

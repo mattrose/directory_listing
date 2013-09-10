@@ -5,95 +5,6 @@ require 'pathname'
 require 'uri'
 require 'erb'
 
-# ### directory_listing: easy, CSS-styled, Apache-like directory listings for Sinatra.
-# 
-# ### Install:
-# 
-# For regular use:
-# 
-# ```bash
-# (sudo) gem install directory_listing
-# ```
-# 
-# Or from source:
-# 
-# ```bash
-# rake install
-# ```
-# 
-# ### Usage:
-# 
-# ```list()``` will return HTML, so the following is a complete Sinatra app that will provide a directory listing of whatever path you navigate to and let you view any file that is served directly:
-# 
-# ```ruby
-# require 'sinatra'
-# require 'sinatra/directory_listing'
-# 
-# get '*' do |path|
-#   if File.exist?(File.join(settings.public_folder, path))
-#     if File.directory?(File.join(settings.public_folder, path))
-#       list()
-#     else
-#       send_file File.join(settings.public_folder, path)
-#     end
-#   else
-#     not_found
-#   end
-# end
-# 
-# not_found do
-#   'Try again.'
-# end
-# ```
-# 
-# ### Options:
-# 
-# Options are passed in a hash:
-# 
-# ```ruby
-# list({
-#   :stylesheet => "stylesheets/styles.css",
-#   :readme => "<a>Welcome!</a>"
-# })
-# ```
-# 
-# Available options:
-# 
-# - ```stylesheet``` - a stylesheet that will be added to the <head> of the generated directory listing
-# - ```readme``` - an HTML string that will be appended at the footer of the generated directory listing
-# - ```should_list_invisibles``` - whether the directory listing should include invisibles (dotfiles) - true or false, defaults to false
-# - ```last_modified_format``` - [format](http://www.ruby-doc.org/core-2.0/Time.html) for last modified date - defaults to ```%Y-%m-%d %H:%M:%S```
-# - ```filename_truncate_length``` - (integer) length to truncate file names to - defaults to 40
-# 
-# ### Styling:
-# 
-# It's pretty easy to figure out how to style ```directory_listing``` by looking at the source, but here are some gotchas:
-# 
-# - Every item listed is a ```<td>``` element in a table. Directories will have a class of ```dir``` and regular files will have a class of ```file```. 
-# - You can style the "File" column with this CSS:
-# 
-# ```css
-# table tr > td:first-child { 
-#   text-align: left;
-# }
-# ```
-# 
-# - "Last modified" column:
-# 
-# ```css
-# table tr > td:first-child + td { 
-#   text-align: left;
-# }
-# ```
-# 
-# - "Size" column:
-# 
-# ```css
-# table tr > td:first-child + td + td { 
-#   text-align: left;
-# }
-# ```
-
 module Sinatra
   module Directory_listing
     
@@ -119,18 +30,13 @@ module Sinatra
       }.merge(o)
 
       ##
-      # Create a page object.
+      # Create a page object and start setting attributes.
 
       page = Page.new
       
       page.should_list_invisibles = options[:should_list_invisibles]
       page.last_modified_format = options[:last_modified_format]
-      page.filename_truncate_length = options[:filename_truncate_length]
-      
-      ##
-      # Get the public folder, request path, and parameters and 
-      # store in globals to be used by the Resource class.
-      
+      page.filename_truncate_length = options[:filename_truncate_length]      
       page.public_folder = settings.public_folder
       page.request_path = request.path
       page.request_params = request.params
@@ -167,7 +73,8 @@ module Sinatra
       end
 
       ##
-      # If the only thing in the array are invisible files, display a "No files" listing.
+      # If the only thing in the array are invisible files, 
+      # display a "No files" listing.
       
       page.files_html = ""
       if files == [".", ".."]

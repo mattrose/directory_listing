@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    directory_listing (0.3.2)
+    directory_listing (0.3.4)
       filesize (>= 0.0.2)
       truncate (>= 0.0.4)
 
