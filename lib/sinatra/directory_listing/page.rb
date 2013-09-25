@@ -21,5 +21,51 @@ class Page
                 :file_sort_link,
                 :mtime_sort_link,
                 :size_sort_link
- 
- end
+
+  def sorting_info(s_item, s_direction)
+
+    file_link_dir = mtime_link_dir = sortby_link_dir = "ascending"
+    s_item_display = s_direction_display = ""
+    
+    case s_item
+    when "file"
+      s_item_display = "alphabetically"
+      case s_direction
+      when "ascending"
+        s_direction_display = ""
+        file_link_dir = "descending"
+      when "descending"
+        s_direction_display = "reversed"
+        file_link_dir = "ascending"
+      end
+    when "mtime"
+      s_item_display = "by modification date"
+      case s_direction
+      when "ascending"
+        s_direction_display = "oldest to newest"
+        mtime_link_dir = "descending"
+      when "descending"
+        s_direction_display = "newest to oldest"
+        mtime_link_dir = "ascending"
+      end
+    when "size"
+      s_item_display = "by size"
+      case s_direction
+      when "ascending"
+        s_direction_display = "smallest to largest"
+        sortby_link_dir = "descending"
+      when "descending"
+        s_direction_display = "largest to smallest"
+        sortby_link_dir = "ascending"
+      end
+    end
+    
+    return  "?sortby=file&direction=#{file_link_dir}",
+            "?sortby=mtime&direction=#{mtime_link_dir}",
+            "?sortby=size&direction=#{sortby_link_dir}",
+            s_item_display,
+            s_direction_display
+    
+  end
+
+end
