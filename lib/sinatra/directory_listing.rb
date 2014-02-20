@@ -66,10 +66,12 @@ module Sinatra
         
       previous_path = ""
       0.upto(path_array.count - 1) do |a|
+        escaped_path = path_array[a].gsub(" ", "%20").gsub("'", "%27")
+        escaped_previous = previous_path.gsub(" ", "%20").gsub("'", "%27")
         if a == path_array.count - 1
           href = ""
         else
-          href = "<a href=\'/#{previous_path}#{path_array[a]}#{params}\'>"
+          href = "<a href=\'/#{escaped_previous}#{escaped_path}#{params}\'>"
         end
         if a == 0 
         page.back_to_link << " #{href}#{path_array[a]}</a>"
