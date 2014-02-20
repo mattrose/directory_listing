@@ -22,6 +22,17 @@ class Page
                 :mtime_sort_link,
                 :size_sort_link
 
+  ##
+  # Return new parameters for another location with the 
+  # same sorting parameters as the passed Page object
+
+  def sorted_url(page)
+    params = ""
+    if page.request_params["sortby"] && page.request_params["direction"]
+      params = "?sortby=" + page.request_params["sortby"] + "&direction=" + page.request_params["direction"]
+    end
+  end
+
   def sorting_info(s_item, s_direction)
 
     file_link_dir = mtime_link_dir = sortby_link_dir = "ascending"
