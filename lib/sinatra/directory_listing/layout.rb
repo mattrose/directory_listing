@@ -9,9 +9,7 @@ module Sinatra
   <%= page.stylesheet %>
 </head>
 <body>
-  <h1>Index of <%= page.current_page %></h1>
-  <%= page.back_to_link %>
-  <br><br>
+  <h1><%= page.back_to_link %></h1>
 
   <table>
     <tr>

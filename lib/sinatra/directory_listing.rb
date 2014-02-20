@@ -51,20 +51,33 @@ module Sinatra
       end
       
       ##
-      # Generate the "back to" link
+      # Generate the navigation links up top
       # Append the sorting information if the current directory is sorted.
-      
-      if URI.unescape(request.path) != "/"
-        back_link = Pathname.new(request.path).parent
-        if page.request_params["sortby"] && page.request_params["direction"]
-          back_link = back_link.to_s + "?sortby=" + page.request_params["sortby"] + "&direction=" + page.request_params["direction"]
-        end
-        page.back_to_link = "<a href='#{back_link}'>&larr; Parent directory</a>"
+     
+      path_array = page.current_page.split("/").drop(1)
+      path_count = path_array.count
+      if URI.unescape(request.path) == "/"
+        page.back_to_link = "Root directory"
       else
-        page.back_to_link = "<a>Root directory</a>"
+        page.back_to_link = "<a href=\'/'>Root directory</a>"
       end
-      
-      ##
+        
+      previous_path = ""
+
+      0.upto(path_array.count - 1) do |a|
+        if a == path_array.count - 1
+          href = ""
+        else
+          href = "<a href=\'/#{previous_path}#{path_array[a]}\'>"
+        end      
+        if page.request_params["sortby"] && page.request_params["direction"]
+          href << "?sortby=" + page.request_params["sortby"] + "&direction=" + page.request_params["direction"]
+        end
+        page.back_to_link << " / #{href}#{path_array[a]}</a>"
+        previous_path << path_array[a] + "/"
+      end
+
+##
       # Get an array of files to be listed. 
       
       files = Array.new
