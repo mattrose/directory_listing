@@ -107,4 +107,12 @@ class DirectoryListingTest < Test::Unit::TestCase
     files = files_array(last_response.body)
     assert_equal ["3k.dat", "2k.dat", "1k.dat"], files
   end
+
+  ##
+  # test navigation bar
+
+  def test_navigation_bar
+    get '/level1/level2/level3/level%204'
+    assert last_response.body.include?('<a href=\'/level1/level2\'>level2</a>')
+  end
 end
