@@ -9,7 +9,7 @@ module Sinatra
   <%= page.stylesheet %>
 </head>
 <body>
-  <h1><%= page.back_to_link %></h1>
+  <h1><%= page.nav_bar %></h1>
 
   <table>
     <tr>

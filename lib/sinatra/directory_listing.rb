@@ -33,52 +33,20 @@ module Sinatra
       # Create a page object and start setting attributes.
 
       page = Page.new
-      
       page.should_list_invisibles = options[:should_list_invisibles]
       page.last_modified_format = options[:last_modified_format]
       page.filename_truncate_length = options[:filename_truncate_length]      
       page.public_folder = settings.public_folder
       page.request_path = request.path
       page.request_params = request.params
+      page.current_page = URI.unescape(request.path)
       
       ##
-      # Start generating strings to be injected into the erb template 
+      # Set the readme and stylesheet
       
-      page.current_page = URI.unescape(request.path)
       page.readme = options[:readme] if options[:readme]
       if options[:stylesheet]
         page.stylesheet = "<link rel='stylesheet' type='text/css' href='/#{options[:stylesheet].sub(/^[\/]*/,"")}'>"
-      end
-      
-      ##
-      # Generate the navigation links 
-      # Append the sorting information if the current directory is sorted.
-      
-      path_array = page.current_page.split("/").drop(1)
-      path_count = path_array.count
-      params = page.sorted_url(page)
-
-      if URI.unescape(request.path) == "/"
-        page.back_to_link = "Index of /"
-      else
-        page.back_to_link = "Index of <a href=\'/#{params}'>/</a>"
-      end
-        
-      previous_path = ""
-      0.upto(path_array.count - 1) do |a|
-        escaped_path = path_array[a].gsub(" ", "%20").gsub("'", "%27")
-        escaped_previous = previous_path.gsub(" ", "%20").gsub("'", "%27")
-        if a == path_array.count - 1
-          href = ""
-        else
-          href = "<a href=\'/#{escaped_previous}#{escaped_path}#{params}\'>"
-        end
-        if a == 0 
-        page.back_to_link << " #{href}#{path_array[a]}</a>"
-        else
-          page.back_to_link << " / #{href}#{path_array[a]}</a>"
-        end
-        previous_path << path_array[a] + "/"
       end
 
       ##

@@ -11,8 +11,8 @@ class Page
                 :public_folder,
                 :request_path,
                 :request_params,
+                :request_params_display,
                 :current_page,
-                :back_to_link,
                 :files_html,
                 :sort_item,
                 :sort_item_display,
@@ -20,18 +20,69 @@ class Page
                 :sort_direction_display,
                 :file_sort_link,
                 :mtime_sort_link,
-                :size_sort_link
+                :size_sort_link, 
+                :nav_bar
 
   ##
-  # Return new parameters for another location with the 
-  # same sorting parameters as the passed Page object
+  # Get URL-appendable (Hash -> String) parameters for a request
 
-  def sorted_url(page)
+  def request_params_display
     params = ""
-    if page.request_params["sortby"] && page.request_params["direction"]
-      params = "?sortby=" + page.request_params["sortby"] + "&direction=" + page.request_params["direction"]
+    if self.request_params["sortby"] && self.request_params["direction"]
+      params = "?sortby=" + self.request_params["sortby"] + "&direction=" + self.request_params["direction"]
     end
   end
+  
+  ##
+  # Generate the page's navigation bar
+  
+  def nav_bar
+    path_array = self.current_page.split("/").drop(1)
+    path_count = path_array.count
+    params = self.request_params_display
+  
+    if URI.unescape(self.current_page) == "/"
+      nav_bar = "Index of /"
+    else
+      nav_bar = "Index of <a href=\'/#{params}'>/</a>"
+    end
+      
+    previous_path = ""
+    0.upto(path_array.count - 1) do |a|
+      
+      ##
+      # Get escaped versions of this path and previous path
+      
+      escaped_path = path_array[a].gsub(" ", "%20").gsub("'", "%27")
+      escaped_previous = previous_path.gsub(" ", "%20").gsub("'", "%27")
+      
+      ##
+      # If this is the last directory in the path, it shouldn't have a link
+      
+      if a == path_array.count - 1
+        href = ""
+      else
+        href = "<a href=\'/#{escaped_previous}#{escaped_path}#{params}\'>"
+      end
+      
+      ##
+      # If this is the first directory above the root, don't prepend a slash
+      
+      if a == 0 
+      nav_bar << " #{href}#{path_array[a]}</a>"
+      else
+        nav_bar << " / #{href}#{path_array[a]}</a>"
+      end
+      
+      previous_path << path_array[a] + "/"
+    end
+    
+    @nav_bar = nav_bar
+    
+  end
+  
+  ##
+  # Return sorting information given an item and the sorting direction
 
   def sorting_info(s_item, s_direction)
 
