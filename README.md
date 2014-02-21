@@ -100,6 +100,15 @@ table tr > td:first-child + td + td {
 }
 ```
 
+- The navigation bar is in a div called 'nav' and consists of hrefs embedded in h1s:
+
+```css
+div.nav h1, div.nav a {
+  font-size: 16px;
+  font-weight: 600;
+}
+```
+
 ### Getting Help
 
 The best way to report a bug or feature request is to [open an issue on GitHub](https://github.com/movesmyers/directory_listing/issues). 
