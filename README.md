@@ -100,7 +100,7 @@ table tr > td:first-child + td + td {
 }
 ```
 
-- The navigation bar is in a div called 'nav' and consists of hrefs embedded in h1s:
+- The navigation bar is in a div called ```nav``` and consists of links embedded in ```h1``` tags:
 
 ```css
 div.nav h1, div.nav a {
