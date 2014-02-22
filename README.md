@@ -65,17 +65,17 @@ list({
 
 Available options:
 
-- ```stylesheet``` - a stylesheet that will be added to the <head> of the generated directory listing, relative to your ```public_folder```
+- ```stylesheet``` - a stylesheet to be included in the generated directory listing, relative to your ```public_folder```
 - ```readme``` - an HTML string that will be appended at the footer of the generated directory listing
 - ```should_list_invisibles``` - whether the directory listing should include invisibles (dotfiles) - true or false, defaults to false
 - ```last_modified_format``` - [format](http://www.ruby-doc.org/core-2.0/Time.html) for last modified date - defaults to ```%Y-%m-%d %H:%M:%S```
-- ```filename_truncate_length``` - (integer) length to truncate file names to - defaults to 40
+- ```filename_truncate_length``` - length to truncate file names to - integer, defaults to 40
 
 ### Styling
 
 It's pretty easy to figure out how to style ```directory_listing``` by looking at the source, but here are some gotchas:
 
-- Every item listed is a ```<td>``` element in a table. Directories will have a class of ```dir``` and regular files will have a class of ```file```. 
+- Every file is a ```<td>``` element in a table. Directories will have a class of ```dir``` and regular files will have a class of ```file```. 
 - You can style the "File" column with this CSS:
 
 ```css
@@ -114,6 +114,10 @@ div.nav h1, div.nav a {
 The best way to report a bug or feature request is to [open an issue on GitHub](https://github.com/movesmyers/directory_listing/issues). 
 
 Additionally, I'd love to hear your feedback about ```directory_listing``` through [Twitter](http://twitter.com/movesmyers) or [email](mailto:rick.myers@me.com).
+
+### Changelog
+
+Here are the latest [commits](https://github.com/movesmyers/directory_listing/commits/master).
 
 ### Contributing
 
