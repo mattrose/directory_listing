@@ -1,5 +1,5 @@
-require File.join(Dir.pwd, 'lib/sinatra/directory_listing.rb')
-require File.join(Dir.pwd, 'lib/sinatra/directory_listing/version.rb')
+$:.push File.expand_path("../lib/sinatra", __FILE__)
+require "directory_listing/version"
 
 Gem::Specification.new do |s|
   s.name        = 'directory_listing'
