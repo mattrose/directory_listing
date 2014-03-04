@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.test_files  = s.files.grep(%r{^(test|spec|features)/})
   s.homepage    = 'https://rubygems.org/gems/directory_listing'
   
+  s.add_dependency 'sinatra'
   s.add_dependency 'filesize', '>=0.0.2'
   s.add_dependency 'truncate', '>=0.0.4'
   
