@@ -122,10 +122,14 @@ Here are the latest [commits](https://github.com/movesmyers/directory_listing/co
 ### Contributing
 
 1. Fork it
-2. Create your feature branch (```git checkout -b my-new-feature```)
-3. Commit your changes (```git commit -am 'Add some feature'```)
-4. Push to the branch (```git push origin my-new-feature```)
+2. Create your feature branch: ```git checkout -b my-new-feature```
+3. Commit your changes (remember to include a test!): ```git commit -am 'Add some feature'```
+4. Push to the branch: ```git push origin my-new-feature```
 5. Create new Pull Request
+
+#### Note: 
+
+Out of the box, the test suite will fail, as one of the tests tries to sort via mtime, and [git doesn't preserve mtimes](https://git.wiki.kernel.org/index.php/GitFaq#Why_isn.27t_Git_preserving_modification_time_on_files.3F). You'll want to touch those files in the following order to make them pass - ```1k.dat```, ```3k.dat```, ```2k.dat```.
 
 ### License
 
