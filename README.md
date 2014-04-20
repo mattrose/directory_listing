@@ -134,4 +134,4 @@ Out of the box, the test suite will fail, as one of the tests tries to sort via 
 
 ### License
 
-```directory_listing``` is licensed under the DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE. See the LICENSE file for details.
+```directory_listing``` is licensed under the MIT license. See the LICENSE file for details.
