@@ -68,6 +68,7 @@ Available options:
 - ```stylesheet``` - a stylesheet to style the generated directory listing with, relative to your ```public_folder```
 - ```readme``` - an HTML string that will be appended at the footer of the generated directory listing
 - ```should_list_invisibles``` - whether the directory listing should include invisibles (dotfiles) - true or false, defaults to false
+- ```should_show_file_exts``` - whether the directory listing should show file extensions - true or false, defaults to true
 - ```last_modified_format``` - [format](http://www.ruby-doc.org/core-2.0/Time.html) for last modified date - defaults to ```%Y-%m-%d %H:%M:%S```
 - ```filename_truncate_length``` - length to truncate file names to - integer, defaults to 40
 
@@ -129,7 +130,7 @@ Here are the latest [commits](https://github.com/movesmyers/directory_listing/co
 
 #### Note: 
 
-Out of the box, the test suite will fail, as one of the tests tries to sort via mtime, and [git doesn't preserve mtimes](https://git.wiki.kernel.org/index.php/GitFaq#Why_isn.27t_Git_preserving_modification_time_on_files.3F). You'll want to touch those files in the following order to make them pass - ```1k.dat```, ```3k.dat```, ```2k.dat```.
+Out of the box, the test suite will fail, as one of the tests tries to sort via mtime, and [git doesn't preserve mtimes](https://git.wiki.kernel.org/index.php/GitFaq#Why_isn.27t_Git_preserving_modification_time_on_files.3F). You'll want to touch those files in the following order to make them pass - ```2k.dat```, ```3k.dat```, ```1k.dat```.
 
 ### License
 

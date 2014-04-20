@@ -3,7 +3,8 @@ class Page
   ##
   # Class definition for the page to be generated.
 
-  attr_accessor :should_list_invisibles, 
+  attr_accessor :should_list_invisibles,
+                :should_show_file_exts,
                 :last_modified_format, 
                 :filename_truncate_length, 
                 :stylesheet,

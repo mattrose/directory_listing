@@ -60,6 +60,14 @@ class DirectoryListingTest < Test::Unit::TestCase
     assert (last_response.body.include?('/should_list_invisibles/.') and 
       last_response.body.include?('/should_list_invisibles/..'))
   end
+  
+  ##
+  # test showing file extensions
+
+  def test_should_show_file_exts
+    get '/should_show_file_exts'
+    assert !(last_response.body.include?('test.txt'))
+  end
 
   ##
   # test sorting

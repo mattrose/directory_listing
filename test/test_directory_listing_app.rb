@@ -20,6 +20,12 @@ get '/should_list_invisibles' do
   })
 end
 
+get '/should_show_file_exts' do 
+  list({
+    :should_show_file_exts => false
+  })
+end
+
 get '*' do |path|
   if File.exist?(File.join(settings.public_folder, path))
     if File.directory?(File.join(settings.public_folder, path))

@@ -54,10 +54,12 @@ class Resource
   def set_name(file)
 
     ##
-    # Make sure we're working with an unescaped file name and truncate it.
+    # Make sure we're working with an unescaped file name.
+    # Remove the extension if neccesary and truncate it.
     # URI.unescape seems to work best to decode uris. 
 
     file = URI.unescape(file)
+    file = file.gsub(File.extname(file), "") if @page.should_show_file_exts == false
     file_truncated = file.truncate(@page.filename_truncate_length, '...')
 
     ##
