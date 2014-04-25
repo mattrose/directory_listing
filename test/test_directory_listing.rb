@@ -66,7 +66,7 @@ class DirectoryListingTest < Test::Unit::TestCase
 
   def test_should_show_file_exts
     get '/should_show_file_exts'
-    assert !(last_response.body.include?('test.txt'))
+    assert last_response.body.include?('<a href=\'/should_show_file_exts/test.txt\'>test</a>')
   end
 
   ##
