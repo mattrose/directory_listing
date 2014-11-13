@@ -10,8 +10,6 @@
 
 ```directory_listing``` also includes a number of configuration options - see the [Options](#options) section below.
 
-A short blog post / announcement exists [here](http://blog.catsanddogshavealltheluck.com/#Directory_Listings_in_Sinatra).
-
 ### Install
 
 For regular use:
