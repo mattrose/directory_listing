@@ -5,13 +5,15 @@ class Resource
   ##
   # Class definition for a single resource to be listed. 
   # Each resource object has accessors for its file name, regular name, 
-  # size and mtime, as well as those components wrapped in html. 
+  # sortable name (removing "[Tt]he") size and mtime, as well as those 
+  # components wrapped in html. 
 
-  attr_accessor :file, :page, :name_html, :mtime, :mtime_html, :size, :size_html
+  attr_accessor :file, :page, :sort_name, :name_html, :mtime, :mtime_html, :size, :size_html
   
   def initialize(file, page)
     @page = page
     @file = file
+    @sort_name = file.gsub(/^[Tt]he /,"")
     @name_html = set_name(file)
     @mtime, @mtime_html = set_mtime(file)
     @size, @size_html = set_size(file)
@@ -136,6 +138,7 @@ class Resource
   # Direction should be "ascending" or "descending"
   
   def self.sort(resource_array, sortby, direction)
+    sortby = "sort_name" if resource_array[0].page.smart_sort == true #and sortby = "file"
     new_array = resource_array.sort_by {|a| a.send(sortby)}
     new_array.reverse! if direction == "descending"
     new_array

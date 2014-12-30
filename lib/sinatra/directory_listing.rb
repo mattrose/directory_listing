@@ -24,6 +24,7 @@ module Sinatra
       options = {
         :should_list_invisibles => false,
         :should_show_file_exts => true,
+        :smart_sort => true,
         :last_modified_format => "%Y-%m-%d %H:%M:%S",
         :filename_truncate_length => 40,
         :stylesheet => "",
@@ -36,6 +37,7 @@ module Sinatra
       page = Page.new
       page.should_list_invisibles = options[:should_list_invisibles]
       page.should_show_file_exts = options[:should_show_file_exts]
+      page.smart_sort = options[:smart_sort]
       page.last_modified_format = options[:last_modified_format]
       page.filename_truncate_length = options[:filename_truncate_length]      
       page.public_folder = settings.public_folder

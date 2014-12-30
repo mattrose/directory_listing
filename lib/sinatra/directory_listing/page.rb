@@ -5,6 +5,7 @@ class Page
 
   attr_accessor :should_list_invisibles,
                 :should_show_file_exts,
+                :smart_sort,
                 :last_modified_format, 
                 :filename_truncate_length, 
                 :stylesheet,
