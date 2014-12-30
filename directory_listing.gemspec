@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.description = "A Sinatra extension for generating easy, CSS-styled, Apache-like directory listings."
   s.authors     = ["Richard Myers"]
   s.email       = 'rick.myers@me.com'
-  s.license     = 'WTFPL'
+  s.license     = 'MIT'
   s.files       = `git ls-files`.split($/)
   s.test_files  = s.files.grep(%r{^(test|spec|features)/})
   s.homepage    = 'https://rubygems.org/gems/directory_listing'
