@@ -14,6 +14,12 @@ get '/readme' do
   })
 end
 
+get '/favicon' do 
+  list({
+    :favicon => "/favicon/favicon.ico"
+  })
+end
+
 get '/should_list_invisibles' do 
   list({
     :should_list_invisibles => true

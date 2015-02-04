@@ -65,6 +65,7 @@ Available options:
 
 - ```stylesheet``` - a stylesheet to style the generated directory listing with, relative to your ```public_folder```
 - ```readme``` - an HTML string that will be appended at the footer of the generated directory listing
+- ```favicon``` - URL to a favicon
 - ```should_list_invisibles``` - whether the directory listing should include invisibles (dotfiles) - true or false, defaults to false
 - ```should_show_file_exts``` - whether the directory listing should show file extensions - true or false, defaults to true
 - ```smart_sort``` - whether sorting should ignore "[Tt]he " at the beginning of filenames - true or false, defaults to true

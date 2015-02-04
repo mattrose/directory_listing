@@ -28,6 +28,7 @@ module Sinatra
         :last_modified_format => "%Y-%m-%d %H:%M:%S",
         :filename_truncate_length => 40,
         :stylesheet => "",
+        :favicon => "",
         :readme => ""
       }.merge(o)
 
@@ -46,9 +47,10 @@ module Sinatra
       page.current_page = URI.unescape(request.path)
       
       ##
-      # Set the readme and stylesheet
+      # Set the readme, stylesheet, and favicon
       
       page.readme = options[:readme] if options[:readme]
+      page.favicon = options[:favicon] if options[:favicon]
       if options[:stylesheet]
         page.stylesheet = "<link rel='stylesheet' type='text/css' href='/#{options[:stylesheet].sub(/^[\/]*/,"")}'>"
       end

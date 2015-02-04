@@ -6,6 +6,7 @@ module Sinatra
 <head>
   <title>Index of <%= page.current_page %>, sorted <%= page.sort_item_display %> <%= page.sort_direction_display %></title>
   <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+  <link rel='shortcut icon' href='<%= page.favicon %>'>
   <%= page.stylesheet %>
 </head>
 <body>

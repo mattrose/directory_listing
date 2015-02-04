@@ -9,6 +9,7 @@ class Page
                 :last_modified_format, 
                 :filename_truncate_length, 
                 :stylesheet,
+                :favicon,
                 :readme,
                 :public_folder,
                 :request_path,
