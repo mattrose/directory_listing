@@ -3,7 +3,7 @@ require 'rake/testtask'
 
 desc "Run the test application on port 4567"
 task :run do
-  `ruby test/test_directory_listing_app.rb -o 0.0.0.0`
+  `shotgun test/test_directory_listing_app.rb -o 0.0.0.0`
 end
 
 desc "Run tests"
