@@ -28,6 +28,7 @@ module Sinatra
         :last_modified_format => "%Y-%m-%d %H:%M:%S",
         :filename_truncate_length => 40,
         :stylesheet => "",
+        :embed_in => "",
         :favicon => "",
         :readme => ""
       }.merge(o)
@@ -40,17 +41,20 @@ module Sinatra
       page.should_show_file_exts = options[:should_show_file_exts]
       page.smart_sort = options[:smart_sort]
       page.last_modified_format = options[:last_modified_format]
-      page.filename_truncate_length = options[:filename_truncate_length]      
+      page.filename_truncate_length = options[:filename_truncate_length]
       page.public_folder = settings.public_folder
       page.request_path = request.path
       page.request_params = request.params
       page.current_page = URI.unescape(request.path)
       
       ##
-      # Set the readme, stylesheet, and favicon
-      
+      # Set the erb template to embed in, the readme, stylesheet, and favicon
+     
       page.readme = options[:readme] if options[:readme]
       page.favicon = options[:favicon] if options[:favicon]
+      if options[:embed_in]
+        page.embed_in = options[:embed_in]
+      end
       if options[:stylesheet]
         page.stylesheet = "<link rel='stylesheet' type='text/css' href='/#{options[:stylesheet].sub(/^[\/]*/,"")}'>"
       end
@@ -123,7 +127,16 @@ module Sinatra
       ##
       # Generate and return the complete page from the erb template.  
       
-      erb = ERB.new(LAYOUT)
+      if !page.embed_in.empty?
+        path = File.join(settings.public_folder, page.embed_in)
+        if File.exists?(path)
+          erb = ERB.new(IO.read(path))
+        else
+          erb = ERB.new(LAYOUT)
+        end
+      else
+        erb = ERB.new(LAYOUT)
+      end
       erb.result(binding)
     end
       

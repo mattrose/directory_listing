@@ -1,0 +1,29 @@
+<html>
+<head>
+  <title>using custom erb template</title>
+  <%= page.stylesheet %>
+</head>
+<body>
+
+  <b><a><%= page.nav_bar %></a></b>
+  <br><br>
+  
+  <a>page.sort_item_display: <%= page.sort_item_display %></a><br>
+  <a>page.sort_direction_display: <%= page.sort_direction_display %></a><br>
+  <br><br>
+
+  <hr>
+  <table>
+    <tr>
+      <th><a href='<%= page.file_sort_link %>'>File</a></th>
+      <th><a href='<%= page.mtime_sort_link %>'>Last modified</a></th>
+      <th><a href='<%= page.size_sort_link %>'>Size</a></th>
+    </tr>
+    <%= page.files_html %>
+  </table>
+  <hr>
+  <br><br>
+
+  <a>here's a readme: <%= page.readme %></a>
+</body>
+</html>

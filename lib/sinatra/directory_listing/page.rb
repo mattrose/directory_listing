@@ -11,6 +11,7 @@ class Page
                 :stylesheet,
                 :favicon,
                 :readme,
+                :embed_in,
                 :public_folder,
                 :request_path,
                 :request_params,

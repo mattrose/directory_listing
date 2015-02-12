@@ -14,6 +14,13 @@ get '/readme' do
   })
 end
 
+get '/embed_in' do 
+  list({
+    :embed_in => "/embed_in/layout.erb",
+    :readme => "this is my readme"
+  })
+end
+
 get '/favicon' do 
   list({
     :favicon => "/favicon/favicon.ico"

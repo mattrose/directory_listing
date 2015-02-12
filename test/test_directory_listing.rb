@@ -43,6 +43,14 @@ class DirectoryListingTest < Test::Unit::TestCase
     get '/stylesheets'
     assert last_response.body.include?('/stylesheets/styles.css')
   end
+  
+  ##
+  # test embedding a custom erb template
+
+  def embed_in
+    get '/embed_in'
+    assert last_response.body.include?('using custom erb template')
+  end
 
   ##
   # test defining a readme
