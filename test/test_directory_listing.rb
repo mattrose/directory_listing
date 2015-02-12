@@ -1,11 +1,10 @@
 ENV['RACK_ENV'] = 'test'
-
-require_relative 'test_directory_listing_app'
-
-require 'test/unit'
+require 'minitest/autorun'
 require 'rack/test'
 
-class DirectoryListingTest < Test::Unit::TestCase
+require File.expand_path '../test_directory_listing_app.rb', __FILE__
+
+class DirectoryListingTest < MiniTest::Unit::TestCase 
   include Rack::Test::Methods
 
   def app
