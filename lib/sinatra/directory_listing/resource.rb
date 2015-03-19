@@ -60,7 +60,7 @@ class Resource
     # Remove the extension if neccesary and truncate it.
     # URI.unescape seems to work best to decode uris. 
 
-    file = URI.unescape(file)
+    file = URI.unescape(file).force_encoding("utf-8")
     file_noext = file.gsub(File.extname(file), "") if @page.should_show_file_exts == false
     if file_noext
       file_truncated = file_noext.truncate(@page.filename_truncate_length, '...')
