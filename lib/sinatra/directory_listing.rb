@@ -130,7 +130,7 @@ module Sinatra
       if !page.embed_in.empty?
         path = File.join(settings.public_folder, page.embed_in)
         if File.exists?(path)
-          erb = ERB.new(IO.read(path))
+          erb = ERB.new(IO.read(path).force_encoding("utf-8"))
         else
           erb = ERB.new(LAYOUT)
         end
